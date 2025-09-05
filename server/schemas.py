@@ -12,7 +12,6 @@ class SNameDescription(BaseModel):
 
 
 class SCar(BaseModel):
-    id: int = Field(..., description="Идентификатор записи")
     vin: str = Field(..., description="Заводской номер машины (VIN)")
     vehicle_model: str = Field(..., description="Модель техники (наименование)")
     engine_model: str = Field(..., description="Модель двигателя (наименование)")
@@ -33,3 +32,13 @@ class SCar(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class STechnicalMaintenance(BaseModel):
+    car_id: int = Field(..., description="ID машины")
+    service_company_id: int = Field(..., description="ID сервисной компании")
+    maintenance_type_id: int = Field(..., description="ID вида ТО")
+    maintenance_date: date = Field(..., description="Дата проведения ТО")
+    operating_time: int = Field(..., description="Наработка мото/часов")
+    order: str = Field(..., description="Номер заказа-наряда")
+    order_date: date = Field(..., description="Дата заказа-наряда")
