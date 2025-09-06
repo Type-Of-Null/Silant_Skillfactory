@@ -34,7 +34,7 @@ class SCar(BaseModel):
         from_attributes = True
 
 
-class STechnicalMaintenance(BaseModel):
+class STechMaintenance(BaseModel):
     car_id: int = Field(..., description="ID машины")
     service_company_id: int = Field(..., description="ID сервисной компании")
     maintenance_type_id: int = Field(..., description="ID вида ТО")
