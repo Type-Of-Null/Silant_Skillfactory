@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-DATABASE_URL = "sqlite+aiosqlite:///./server/silant.db"
+DATABASE_URL = "sqlite+aiosqlite:///./silant.db"
 
 engine = create_async_engine(
     DATABASE_URL,

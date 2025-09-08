@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* Подключение шрифтов PT Astra Sans */
+@font-face {
+  font-family: 'PT Astra Sans';
+  src: url('./assets/fonts/PT-Astra-Sans_Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PT Astra Sans';
+  src: url('./assets/fonts/PT-Astra-Sans_Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PT Astra Sans';
+  src: url('./assets/fonts/PT-Astra-Sans_Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'PT Astra Sans';
+  src: url('./assets/fonts/PT-Astra-Sans_Bold-Italic.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* Установка PT Astra Sans как шрифта по умолчанию */
+html,
+body {
+  font-family: 'PT Astra Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, CheckConstraint, Enum
 from sqlalchemy.orm import relationship
-from server.database import Base
+from database import Base
 from enum import Enum as PyEnum
 
 # Модель "Роль пользователя"
