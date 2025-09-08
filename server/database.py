@@ -1,41 +1,25 @@
-from __future__ import annotations
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-import os
-from pathlib import Path
-from typing import Iterator
+DATABASE_URL = "sqlite+aiosqlite:///./server/silant.db"
 
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker, Session
-
-
-def _build_sqlite_url() -> str:
-    project_root = Path(__file__).resolve().parents[2]
-    db_path = project_root / "db.sqlite3"
-    return f"sqlite:///{db_path.as_posix()}"
-
-
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", _build_sqlite_url())
-
-engine: Engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args=(
-        {"check_same_thread": False}
-        if SQLALCHEMY_DATABASE_URL.startswith("sqlite")
-        else {}
-    ),
-    future=True,
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=True,
+    connect_args={"check_same_thread": False}
 )
 
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
-
-metadata = MetaData()
-metadata.reflect(bind=engine)
+Base = declarative_base()
 
 
-def get_db() -> Iterator[Session]:
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+AsyncSessionLocal = sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
+
+
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
