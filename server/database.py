@@ -5,7 +5,7 @@ DATABASE_URL = "sqlite+aiosqlite:///./silant.db"
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True,
+    echo=False,
     connect_args={"check_same_thread": False}
 )
 

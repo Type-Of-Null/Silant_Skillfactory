@@ -33,6 +33,18 @@ class SCar(BaseModel):
     class Config:
         from_attributes = True
 
+class SCarNotAuth(BaseModel):
+    vin: str = Field(..., description="Заводской номер машины (VIN)")
+    vehicle_model: str = Field(..., description="Модель техники (наименование)")
+    engine_model: str = Field(..., description="Модель двигателя (наименование)")
+    engine_number: str = Field(..., description="Заводской номер двигателя")
+    transmission_model: str = Field(..., description="Модель трансмиссии (наименование)")
+    transmission_number: str = Field(..., description="Заводской номер трансмиссии")
+    drive_axle: str = Field(..., description="Модель ведущего моста (наименование)")
+    drive_axle_number: str = Field(..., description="Заводской номер ведущего моста")
+    steering_axle: str = Field(..., description="Модель управляемого моста (наименование)")
+    steering_axle_number: str = Field(..., description="Заводской номер управляемого моста")
+
 
 class STechMaintenance(BaseModel):
     car_id: int = Field(..., description="ID машины")
