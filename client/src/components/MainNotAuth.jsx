@@ -7,6 +7,7 @@ import {
 
 const Main = () => {
   const [vin, setVin] = useState("");
+  const [lastSubmittedVin, setLastSubmittedVin] = useState("");
   const [carData, setCarData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -90,6 +91,7 @@ const Main = () => {
 
       const data = await response.json();
       setCarData(data);
+      setLastSubmittedVin(vin);
     } catch (err) {
       setError(err.message);
       setCarData(null);
@@ -119,7 +121,7 @@ const Main = () => {
               />
               <button
                 type="submit"
-                disabled={loading || !vin.trim()}
+                disabled={loading || !vin.trim() || vin === lastSubmittedVin}
                 className="bg-[#D20A11] px-6 py-3 whitespace-nowrap text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "Поиск..." : "Найти технику"}
@@ -153,8 +155,8 @@ const Main = () => {
 
         {carData && (
           <div className="overflow-hidden bg-white shadow-md">
-            <div className="border-b border-gray-200 p-6">
-              <h3 className="text-xl font-bold text-gray-800">
+            <div className="border-b border-gray-200 p-6 bg-[#EBE6D6]">
+              <h3 className="text-xl font-bold text-[#163E6C]">
                 Карточка техники
               </h3>
               <p className="text-gray-600">Детальная информация о технике</p>
