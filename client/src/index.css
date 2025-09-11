@@ -29,7 +29,6 @@
   font-style: italic;
 }
 
-/* Установка PT Astra Sans как шрифта по умолчанию */
 html,
 body {
   font-family: 'PT Astra Sans', sans-serif;

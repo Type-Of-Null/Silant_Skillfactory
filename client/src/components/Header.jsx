@@ -1,19 +1,66 @@
-import {Link, useNavigate} from "react-router-dom";
-import logo from "../assets/img/Logotype.png"
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import logo from "../assets/img/Logotype.png";
+import AuthForm from "./AuthForm";
 
 const Header = () => {
-    return (
-        <header className="bg-[#EBE6D6] text-[#3D3D3D] p-4">
-            <div className="container mx-auto flex justify-between items-center">
-                <img className="w-1/8 max-md:w-1/5" src={logo} alt="Service Center Logo"/>
-                <div className="w-1/3 text-[16px] max-md:text-[12px] text-center">+7-8352-20-12-09 Telegram</div>
-                <button className="bg-[#D20A11] text-white p-2">
-                    Авторизация
+  const [showAuthForm, setShowAuthForm] = useState(false);
+  const { user, logout } = useAuth();
+
+  const handleLoginClick = () => {
+    setShowAuthForm(true);
+  };
+
+  const handleCloseAuthForm = () => {
+    setShowAuthForm(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  return (
+    <>
+      <header className="bg-color_bg p-4 text-[#3d3d3d]">
+        <div className="container mx-auto grid grid-cols-3 items-center">
+          <div className="flex justify-start">
+            <Link to="/" className="flex items-center">
+              <img className="w-1/3" src={logo} alt="Service Center Logo" />
+            </Link>
+          </div>
+
+          <div className="text-center text-[16px] max-md:text-[12px]">
+            +7-8352-20-12-09 Telegram <br />
+            Электронная сервисная книжка "Мой Силант"
+          </div>
+
+          <div className="flex justify-end">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium">{user.username}</span>
+                <button
+                  onClick={handleLogout}
+                  className="bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
+                >
+                  Выйти
                 </button>
-            </div>
-            <div className="text-center">Электронная сервисная книжка "Мой Силант"</div>
-        </header>
-    );
+              </div>
+            ) : (
+              <button
+                onClick={handleLoginClick}
+                className="bg-[#D20A11] px-4 py-2 text-white transition-colors hover:bg-red-700"
+              >
+                Войти
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {showAuthForm && <AuthForm onClose={handleCloseAuthForm} />}
+    </>
+  );
 };
 
 export default Header;

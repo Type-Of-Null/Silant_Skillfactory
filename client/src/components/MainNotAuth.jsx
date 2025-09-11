@@ -101,7 +101,7 @@ const Main = () => {
   return (
     <div className="min-h-screen bg-white px-4 py-8">
       <div className="mx-auto max-w-6xl">
-        <h2 className="mb-8 text-center text-3xl font-bold text-gray-800">
+        <h2 className="mb-8 text-center text-3xl font-bold text-[#163E6C]">
           Проверка комплектации и технических характеристик техники Силант
         </h2>
 
@@ -128,7 +128,7 @@ const Main = () => {
           </form>
 
           {error && (
-            <div className="mb-6 rounded border-l-4 border-red-500 bg-red-50 p-4 text-red-700">
+            <div className="mb-6 border-l-4 border-red-500 bg-red-50 p-4 text-red-700">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
@@ -152,7 +152,7 @@ const Main = () => {
         </div>
 
         {carData && (
-          <div className="overflow-hidden rounded-lg bg-white shadow-md">
+          <div className="overflow-hidden bg-white shadow-md">
             <div className="border-b border-gray-200 p-6">
               <h3 className="text-xl font-bold text-gray-800">
                 Карточка техники
