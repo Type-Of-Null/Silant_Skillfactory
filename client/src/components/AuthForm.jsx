@@ -10,6 +10,7 @@ const AuthForm = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('[AuthForm] submit clicked');
     if (!username.trim() || !password.trim()) {
       setError("Пожалуйста, заполните все поля");
       return;
@@ -19,7 +20,9 @@ const AuthForm = ({ onClose }) => {
     setError("");
 
     try {
+      console.log('[AuthForm] calling login with', { username });
       const result = await login(username, password);
+      console.log('[AuthForm] login result', result);
       if (result.success) {
         onClose();
       } else {

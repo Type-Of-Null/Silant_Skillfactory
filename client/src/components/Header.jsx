@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "../assets/img/Logotype.png";
@@ -7,6 +7,13 @@ import AuthForm from "./AuthForm";
 const Header = () => {
   const [showAuthForm, setShowAuthForm] = useState(false);
   const { user, logout } = useAuth();
+  
+  // Автозакрытие окна авторизации
+  useEffect(() => {
+    if (user) {
+      setShowAuthForm(false);
+    }
+  }, [user]);
 
   const handleLoginClick = () => {
     setShowAuthForm(true);
