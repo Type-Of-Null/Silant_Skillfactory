@@ -16,30 +16,41 @@ const Main = () => {
       {
         header: "Параметр",
         accessorKey: "param",
-        cell: info => <span className="font-semibold">{info.getValue()}</span>,
+        cell: (info) => (
+          <span className="font-semibold">{info.getValue()}</span>
+        ),
       },
       {
         header: "Значение",
         accessorKey: "value",
       },
     ],
-    []
+    [],
   );
 
   const tableData = useMemo(() => {
     if (!carData) return [];
-    
+
     return [
       { param: "VIN", value: carData.vin },
       { param: "Модель техники", value: carData.vehicle_model },
       { param: "Модель двигателя", value: carData.engine_model },
       { param: "Заводской номер двигателя", value: carData.engine_number },
       { param: "Модель трансмиссии", value: carData.transmission_model },
-      { param: "Заводской номер трансмиссии", value: carData.transmission_number },
+      {
+        param: "Заводской номер трансмиссии",
+        value: carData.transmission_number,
+      },
       { param: "Модель ведущего моста", value: carData.drive_axle },
-      { param: "Заводской номер ведущего моста", value: carData.drive_axle_number },
+      {
+        param: "Заводской номер ведущего моста",
+        value: carData.drive_axle_number,
+      },
       { param: "Модель управляемого моста", value: carData.steering_axle },
-      { param: "Заводской номер управляемого моста", value: carData.steering_axle_number },
+      {
+        param: "Заводской номер управляемого моста",
+        value: carData.steering_axle_number,
+      },
     ];
   }, [carData]);
 
@@ -52,7 +63,7 @@ const Main = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!vin.trim()) return;
-    
+
     setLoading(true);
     setError(null);
 
@@ -65,12 +76,16 @@ const Main = () => {
       if (!contentType || !contentType.includes("application/json")) {
         const textResponse = await response.text();
         console.error("Non-JSON response:", textResponse.substring(0, 200));
-        throw new Error("Сервер вернул неожиданный ответ. Пожалуйста, попробуйте позже.");
+        throw new Error(
+          "Сервер вернул неожиданный ответ. Пожалуйста, попробуйте позже.",
+        );
       }
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || "Машина с указанным VIN не найдена");
+        throw new Error(
+          errorData.detail || "Машина с указанным VIN не найдена",
+        );
       }
 
       const data = await response.json();
@@ -84,28 +99,28 @@ const Main = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#EBE6D6] py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
+    <div className="min-h-screen bg-white px-4 py-8">
+      <div className="mx-auto max-w-6xl">
+        <h2 className="mb-8 text-center text-3xl font-bold text-gray-800">
           Проверка комплектации и технических характеристик техники Силант
         </h2>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="mb-8 bg-[#EBE6D6] p-6 shadow-md">
           <form onSubmit={handleSubmit} className="mb-6">
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row">
               <input
                 type="text"
                 value={vin}
                 onChange={(e) => setVin(e.target.value)}
                 placeholder="Введите VIN или заводской номер"
-                className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="flex-grow p-3 bg-white focus:outline-none"
                 required
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading || !vin.trim()}
-                className="bg-[#D20A11] text-white py-3 px-6 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                className="bg-[#D20A11] px-6 py-3 whitespace-nowrap text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "Поиск..." : "Найти технику"}
               </button>
@@ -113,11 +128,19 @@ const Main = () => {
           </form>
 
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+            <div className="mb-6 rounded border-l-4 border-red-500 bg-red-50 p-4 text-red-700">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  <svg
+                    className="h-5 w-5 text-red-500"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <div className="ml-3">
@@ -129,42 +152,47 @@ const Main = () => {
         </div>
 
         {carData && (
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-6 border-b border-gray-200">
-              <h3 className="text-xl font-bold text-gray-800">Карточка техники</h3>
+          <div className="overflow-hidden rounded-lg bg-white shadow-md">
+            <div className="border-b border-gray-200 p-6">
+              <h3 className="text-xl font-bold text-gray-800">
+                Карточка техники
+              </h3>
               <p className="text-gray-600">Детальная информация о технике</p>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
-                  {table.getHeaderGroups().map(headerGroup => (
+                  {table.getHeaderGroups().map((headerGroup) => (
                     <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
+                      {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
                         >
                           {header.isPlaceholder
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </th>
                       ))}
                     </tr>
                   ))}
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {table.getRowModel().rows.map(row => (
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {table.getRowModel().rows.map((row) => (
                     <tr key={row.id} className="hover:bg-gray-50">
-                      {row.getVisibleCells().map(cell => (
-                        <td 
-                          key={cell.id} 
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="px-6 py-4 text-sm whitespace-nowrap text-gray-900"
                         >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </td>
                       ))}
                     </tr>
