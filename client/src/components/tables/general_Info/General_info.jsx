@@ -1,33 +1,37 @@
 import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { generalColumns, customStyles } from "./config";
+import { useApi } from "../../../hooks/useApi";
 
 const General_info = ({ activeTab }) => {
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const { loading, error, get, clearError } = useApi();
 
   useEffect(() => {
+    let cancelled = false;
     if (activeTab !== "general") return;
     const load = async () => {
-      setLoading(true);
-      setError("");
       try {
-        const res = await fetch("http://localhost:8000/api/cars");
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.detail || "Ошибка загрузки данных");
+        const res = await get("http://localhost:8000/api/cars", 10000);
+        if (!cancelled) {
+          if (res.success) {
+            const data = res.data;
+            setRows(Array.isArray(data) ? data : []);
+          } else {
+            setRows([]);
+          }
         }
-        const data = await res.json();
-        setRows(Array.isArray(data) ? data : []);
       } catch (e) {
-        setError(e.message || "Ошибка загрузки данных");
-        setRows([]);
-      } finally {
-        setLoading(false);
+				console.log(e);
+        if (!cancelled) setRows([]);
       }
     };
     load();
+    return () => {
+      cancelled = true;
+      clearError();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   return (
@@ -41,7 +45,6 @@ const General_info = ({ activeTab }) => {
           )}
 
           <DataTable
-            className="table-scroll"
             columns={generalColumns}
             data={rows}
             progressPending={loading}
