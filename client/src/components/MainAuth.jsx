@@ -6,6 +6,10 @@ const MainAuth = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  // State for maintenance tab
+  const [maintRows, setMaintRows] = useState([]);
+  const [maintLoading, setMaintLoading] = useState(false);
+  const [maintError, setMaintError] = useState("");
 
   useEffect(() => {
     if (activeTab !== "general") return;
@@ -25,6 +29,43 @@ const MainAuth = () => {
         setRows([]);
       } finally {
         setLoading(false);
+      }
+    };
+    load();
+  }, [activeTab]);
+
+  // Columns for maintenance table
+  const maintColumns = useMemo(
+    () => [
+      { name: "VIN", selector: (r) => r.vin, sortable: true, width: "180px" },
+      { name: "Вид ТО", selector: (r) => r.maintenance_type, sortable: true },
+      { name: "Дата ТО", selector: (r) => r.maintenance_date, sortable: true, id: "maintenance_date", width: "140px" },
+      { name: "Заказ-наряд №", selector: (r) => r.order_number, sortable: true, width: "160px" },
+      { name: "Дата заказа-наряда", selector: (r) => r.order_date, sortable: true, width: "180px" },
+      { name: "Сервисная компания", selector: (r) => r.service_company, sortable: true, wrap: true },
+    ],
+    [],
+  );
+
+  // Load maintenance data when maintenance tab is active
+  useEffect(() => {
+    if (activeTab !== "maintenance") return;
+    const load = async () => {
+      setMaintLoading(true);
+      setMaintError("");
+      try {
+        const res = await fetch("http://localhost:8000/api/maintenance");
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || "Ошибка загрузки данных ТО");
+        }
+        const data = await res.json();
+        setMaintRows(Array.isArray(data) ? data : []);
+      } catch (e) {
+        setMaintError(e.message || "Ошибка загрузки данных ТО");
+        setMaintRows([]);
+      } finally {
+        setMaintLoading(false);
       }
     };
     load();
@@ -209,8 +250,32 @@ const MainAuth = () => {
           )}
 
           {activeTab === "maintenance" && (
-            <div className="py-8 text-center text-gray-600">
-              Раздел ТО в разработке
+            <div className="overflow-x-auto overflow-y-hidden table-scroll">
+              {maintError && (
+                <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-3 text-red-700">
+                  {maintError}
+                </div>
+              )}
+              <DataTable
+                columns={maintColumns}
+                data={maintRows}
+                progressPending={maintLoading}
+                progressComponent={
+                  <div className="py-4 text-center text-gray-600">Загрузка...</div>
+                }
+                noDataComponent={
+                  <div className="py-4 text-center text-gray-600">Нет данных</div>
+                }
+                customStyles={customStyles}
+                pagination
+                paginationPerPage={10}
+                paginationRowsPerPageOptions={[10, 25, 50, 100]}
+                highlightOnHover
+                striped
+                responsive
+                defaultSortFieldId="maintenance_date"
+                defaultSortAsc={false}
+              />
             </div>
           )}
 
