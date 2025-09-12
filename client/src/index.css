@@ -36,3 +36,8 @@ body {
   padding: 0;
   height: 100%;
 }
+
+.table-scroll,
+.rdt_TableWrapper {
+  scrollbar-color: #163E6C #f0f0f0;
+}
