@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
+import General_info from "./tables/general_Info/General_info";
 
 const MainAuth = () => {
   const [activeTab, setActiveTab] = useState("general");
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [rows, setRows] = useState([]);
+  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   // State for maintenance tab
   const [maintRows, setMaintRows] = useState([]);
@@ -39,10 +40,31 @@ const MainAuth = () => {
     () => [
       { name: "VIN", selector: (r) => r.vin, sortable: true, width: "180px" },
       { name: "Вид ТО", selector: (r) => r.maintenance_type, sortable: true },
-      { name: "Дата ТО", selector: (r) => r.maintenance_date, sortable: true, id: "maintenance_date", width: "140px" },
-      { name: "Заказ-наряд №", selector: (r) => r.order_number, sortable: true, width: "160px" },
-      { name: "Дата заказа-наряда", selector: (r) => r.order_date, sortable: true, width: "180px" },
-      { name: "Сервисная компания", selector: (r) => r.service_company, sortable: true, wrap: true },
+      {
+        name: "Дата ТО",
+        selector: (r) => r.maintenance_date,
+        sortable: true,
+        id: "maintenance_date",
+        width: "140px",
+      },
+      {
+        name: "Заказ-наряд №",
+        selector: (r) => r.order_number,
+        sortable: true,
+        width: "160px",
+      },
+      {
+        name: "Дата заказа-наряда",
+        selector: (r) => r.order_date,
+        sortable: true,
+        width: "180px",
+      },
+      {
+        name: "Сервисная компания",
+        selector: (r) => r.service_company,
+        sortable: true,
+        wrap: true,
+      },
     ],
     [],
   );
@@ -71,90 +93,6 @@ const MainAuth = () => {
     load();
   }, [activeTab]);
 
-  const columns = useMemo(
-    () => [
-      { name: "VIN", selector: (r) => r.vin, sortable: true, width: "180px" },
-      {
-        name: "Модель техники",
-        selector: (r) => r.vehicle_model,
-        sortable: true,
-      },
-      {
-        name: "Модель двигателя",
-        selector: (r) => r.engine_model,
-        sortable: true,
-      },
-      {
-        name: "Зав. № двигателя",
-        selector: (r) => r.engine_number,
-        sortable: true,
-      },
-      {
-        name: "Модель трансмиссии",
-        selector: (r) => r.transmission_model,
-        sortable: true,
-      },
-      {
-        name: "Зав. № трансмиссии",
-        selector: (r) => r.transmission_number,
-        sortable: true,
-      },
-      { name: "Ведущий мост", selector: (r) => r.drive_axle, sortable: true },
-      {
-        name: "Зав. № ведущего моста",
-        selector: (r) => r.drive_axle_number,
-        sortable: true,
-      },
-      {
-        name: "Управляемый мост",
-        selector: (r) => r.steering_axle,
-        sortable: true,
-      },
-      {
-        name: "Зав. № управляемого моста",
-        selector: (r) => r.steering_axle_number,
-        sortable: true,
-      },
-      {
-        name: "Дог. поставки",
-        selector: (r) => r.delivery_agreement,
-        sortable: true,
-        wrap: true,
-      },
-      {
-        name: "Дата отгрузки",
-        selector: (r) => r.shipment_date,
-        sortable: true,
-				id: "shipment_date",
-      },
-      {
-        name: "Грузополучатель",
-        selector: (r) => r.recipient,
-        sortable: true,
-        wrap: true,
-      },
-      {
-        name: "Адрес поставки",
-        selector: (r) => r.delivery_address,
-        sortable: true,
-        wrap: true,
-      },
-      {
-        name: "Комплектация",
-        selector: (r) => r.equipment,
-        sortable: true,
-        wrap: true,
-      },
-      { name: "Клиент", selector: (r) => r.client, sortable: true },
-      {
-        name: "Сервисная компания",
-        selector: (r) => r.service_company,
-        sortable: true,
-      },
-    ],
-    [],
-  );
-
   const customStyles = {
     headCells: {
       style: {
@@ -167,6 +105,7 @@ const MainAuth = () => {
     rows: {
       style: {
         minHeight: "48px",
+				fontSize: "14px",
       },
     },
   };
@@ -215,42 +154,9 @@ const MainAuth = () => {
         </div>
 
         <div className="rounded-lg bg-white p-4 shadow-md">
-          {activeTab === "general" && (
-            <div>
-              {error && (
-                <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-3 text-red-700">
-                  {error}
-                </div>
-              )}
-              <DataTable className="table-scroll"
-                columns={columns}
-                data={rows}
-                progressPending={loading}
-                progressComponent={
-                  <div className="py-4 text-center text-gray-600">
-                    Загрузка...
-                  </div>
-                }
-                noDataComponent={
-                  <div className="py-4 text-center text-gray-600">
-                    Нет данных
-                  </div>
-                }
-                customStyles={customStyles}
-                pagination
-                paginationPerPage={10}
-                paginationRowsPerPageOptions={[10, 25, 50, 100]}
-                highlightOnHover
-                striped
-                responsive
-								defaultSortFieldId="shipment_date"
-                defaultSortAsc={false}
-              />
-            </div>
-          )}
-
+					<General_info activeTab={activeTab} />
           {activeTab === "maintenance" && (
-            <div className="overflow-x-auto overflow-y-hidden table-scroll">
+            <div className="table-scroll overflow-x-auto overflow-y-hidden">
               {maintError && (
                 <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-3 text-red-700">
                   {maintError}
@@ -261,10 +167,14 @@ const MainAuth = () => {
                 data={maintRows}
                 progressPending={maintLoading}
                 progressComponent={
-                  <div className="py-4 text-center text-gray-600">Загрузка...</div>
+                  <div className="py-4 text-center text-gray-600">
+                    Загрузка...
+                  </div>
                 }
                 noDataComponent={
-                  <div className="py-4 text-center text-gray-600">Нет данных</div>
+                  <div className="py-4 text-center text-gray-600">
+                    Нет данных
+                  </div>
                 }
                 customStyles={customStyles}
                 pagination
