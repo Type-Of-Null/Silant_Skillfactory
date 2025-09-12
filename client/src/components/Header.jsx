@@ -48,7 +48,7 @@ const Header = () => {
                 <span className="text-sm font-medium">{user.username}</span>
                 <button
                   onClick={handleLogout}
-                  className="bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
+                  className="bg-[#D20A11] px-4 py-2 text-white transition-colors hover:bg-gray-300"
                 >
                   Выйти
                 </button>

@@ -1,5 +1,7 @@
+// contexts/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApi } from '../hooks/useApi';
 
 const AuthContext = createContext(null);
 
@@ -7,57 +9,34 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { post, loading: apiLoading } = useApi();
 
+  // Восстановление сессии из localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse user data', e);
+      } catch {
         localStorage.removeItem('user');
       }
     }
     setLoading(false);
   }, []);
 
+  // Функция логина
   const login = async (username, password) => {
-    try {
-      console.log('[AuthContext] login called', { username });
-      // Add timeout to avoid hanging UI if network stalls
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s
+    const result = await post('http://127.0.0.1:8000/api/login', { 
+      username, password 
+    });
 
-      const response = await fetch('http://127.0.0.1:8000/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-        signal: controller.signal,
-      }).finally(() => clearTimeout(timeoutId));
-      console.log('[AuthContext] fetch returned', response.status);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.warn('[AuthContext] login failed', errorData);
-        throw new Error(errorData.detail || 'Неверное имя пользователя или пароль');
-      }
-
-      const userData = await response.json();
-      console.log('[AuthContext] login success', userData);
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      // Navigate to dashboard after successful login
+    if (result.success) {
+      setUser(result.data);
+      localStorage.setItem('user', JSON.stringify(result.data));
       navigate('/');
-      return { success: true };
-    } catch (error) {
-      const message = error.name === 'AbortError'
-        ? 'Превышено время ожидания ответа от сервера'
-        : (error.message || 'Ошибка сети');
-      console.error('[AuthContext] Login error:', error);
-      return { success: false, message };
     }
+    
+    return result;
   };
 
   const logout = () => {
@@ -66,12 +45,15 @@ export const AuthProvider = ({ children }) => {
     navigate('/');
   };
 
+  const hasRole = (role) => user?.role === role;
+
   const value = {
     user,
     isAuthenticated: !!user,
     login,
     logout,
-    loading,
+    hasRole,
+    loading: loading || apiLoading,
   };
 
   return (
