@@ -16,6 +16,7 @@ const General_info = ({ activeTab }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
+						console.log(data);
             setRows(Array.isArray(data) ? data : []);
           } else {
             setRows([]);
