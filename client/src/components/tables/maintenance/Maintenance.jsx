@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "react-data-table-component";
-import { maintColumns, customStyles } from "./config";
+import { maintColumns, customStyles, maintenancefilteredRows } from "./config";
 import { useApi } from "../../../hooks/useApi";
 
-const General_info = ({ activeTab }) => {
-	const [maintRows, setMaintRows] = useState([]);
+const Maintenance = ({ activeTab, filters = {} }) => {
+  const [maintRows, setMaintRows] = useState([]);
   const { loading, error, get, clearError } = useApi();
 
+  const columns = useMemo(() => maintColumns(), []);
+  const filteredRows = useMemo(
+    () => maintenancefilteredRows(maintRows, filters),
+    [maintRows, filters],
+  );
   useEffect(() => {
     let cancelled = false;
-    if (activeTab !== "general") return;
+    if (activeTab !== "maintenance") return;
     const load = async () => {
       try {
         const res = await get("http://localhost:8000/api/maintenance", 10000);
@@ -22,7 +27,7 @@ const General_info = ({ activeTab }) => {
           }
         }
       } catch (e) {
-				console.log(e);
+        console.log(e);
         if (!cancelled) setMaintRows([]);
       }
     };
@@ -31,46 +36,43 @@ const General_info = ({ activeTab }) => {
       cancelled = true;
       clearError();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   return (
     <div>
       {activeTab === "maintenance" && (
-            <div className="table-scroll overflow-x-auto overflow-y-hidden">
-              {error && (
-                <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-3 text-red-700">
-                  {error}
-                </div>
-              )}
-              <DataTable
-                columns={maintColumns}
-                data={maintRows}
-                progressPending={loading}
-                progressComponent={
-                  <div className="py-4 text-center text-gray-600">
-                    Загрузка...
-                  </div>
-                }
-                noDataComponent={
-                  <div className="py-4 text-center text-gray-600">
-                    Нет данных
-                  </div>
-                }
-                customStyles={customStyles}
-                pagination
-                paginationPerPage={10}
-                paginationRowsPerPageOptions={[10, 25, 50, 100]}
-                highlightOnHover
-                striped
-                responsive
-                defaultSortFieldId="maintenance_date"
-                defaultSortAsc={false}
-              />
+        <div className="table-scroll overflow-x-auto overflow-y-hidden">
+          {error && (
+            <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-3 text-red-700">
+              {error}
             </div>
           )}
+          <DataTable
+            columns={columns}
+            data={filteredRows}
+            progressPending={loading}
+            persistTableHead
+            progressComponent={
+              <div className="py-4 text-center text-gray-600">Загрузка...</div>
+            }
+            noDataComponent={
+              <div className="py-4 text-center text-gray-600">Нет данных</div>
+            }
+            customStyles={customStyles}
+            pagination
+            paginationPerPage={10}
+            paginationRowsPerPageOptions={[10, 25, 50, 100]}
+            highlightOnHover
+            striped
+            responsive
+            defaultSortFieldId="maintenance_date"
+            defaultSortAsc={false}
+          />
+        </div>
+      )}
     </div>
   );
 };
 
-export default General_info;
+export default Maintenance;

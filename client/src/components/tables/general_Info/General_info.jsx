@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "react-data-table-component";
-import { generalColumns, customStyles } from "./config";
+import { generalColumns, customStyles, generalFilterRows } from "./config";
 import { useApi } from "../../../hooks/useApi";
 
-const General_info = ({ activeTab }) => {
+const General_info = ({ activeTab, filters = {} }) => {
   const [rows, setRows] = useState([]);
   const { loading, error, get, clearError } = useApi();
+
+	// Кэшируем столбцы и отфильтрованные строки
+  const columns = useMemo(() => generalColumns(), []);
+  const filteredRows = useMemo(
+    () => generalFilterRows(rows, filters),
+    [rows, filters],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -16,14 +23,13 @@ const General_info = ({ activeTab }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
-						console.log(data);
             setRows(Array.isArray(data) ? data : []);
           } else {
             setRows([]);
           }
         }
       } catch (e) {
-				console.log(e);
+        console.log(e);
         if (!cancelled) setRows([]);
       }
     };
@@ -32,7 +38,7 @@ const General_info = ({ activeTab }) => {
       cancelled = true;
       clearError();
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   return (
@@ -46,9 +52,10 @@ const General_info = ({ activeTab }) => {
           )}
 
           <DataTable
-            columns={generalColumns}
-            data={rows}
+            columns={columns}
+            data={filteredRows}
             progressPending={loading}
+            persistTableHead
             progressComponent={
               <div className="py-4 text-center text-gray-600">Загрузка...</div>
             }
