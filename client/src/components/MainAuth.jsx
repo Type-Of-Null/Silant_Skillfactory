@@ -16,7 +16,7 @@ const MainAuth = () => {
     steering_axle: "",
     drive_axle: "",
   });
-	
+
   const [maintFilters, setMaintFilters] = useState({
     maintenance_type: "",
     vin: "",
@@ -283,7 +283,7 @@ const MainAuth = () => {
           <button
             type="button"
             onClick={() => setShowFilters((s) => !s)}
-            className="top-1/2 right-0 z-20 -mr-[1px] bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
+            className="block ml-auto bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
             aria-label="Панель фильтров"
             title="Панель фильтров"
           >
