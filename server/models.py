@@ -5,10 +5,10 @@ from enum import Enum as PyEnum
 
 # Модель "Роль пользователя"
 class UserRole(str, PyEnum):
-    NO_AUTH = "no_auth"
-    CLIENT = "client"
-    MANAGER = "manager"
-    SERVICE_COMPANY = "service_company"
+    no_auth = "no_auth"
+    client = "client"
+    manager = "manager"
+    service = "service"
 
 # Модель "Клиент"
 class Client(Base):
@@ -186,7 +186,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.NO_AUTH)
+    role = Column(Enum(UserRole), default=UserRole.no_auth)
 
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=True)
     service_company_id = Column(Integer, ForeignKey("service_company_model.id"), nullable=True)

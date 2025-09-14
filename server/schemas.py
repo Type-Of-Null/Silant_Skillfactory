@@ -2,6 +2,20 @@ from pydantic import BaseModel, Field
 from datetime import date
 
 
+# Схемы логирования
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class LoginResponse(BaseModel):
+    id: int
+    username: str
+    role: str
+    name: str | None = None
+
+    class Config:
+        from_attributes = True
+
 class SNameDescription(BaseModel):
     id: int = Field(..., description="Идентификатор записи")
     name: str = Field(..., description="Название")
@@ -13,6 +27,7 @@ class SNameDescription(BaseModel):
 
 class SCar(BaseModel):
     vin: str = Field(..., description="Заводской номер машины (VIN)")
+    vehicle_model_id: int | None = Field(None, description="ID модели техники")
     vehicle_model: str = Field(..., description="Модель техники (наименование)")
     engine_model: str = Field(..., description="Модель двигателя (наименование)")
     engine_number: str = Field(..., description="Заводской номер двигателя")
@@ -47,9 +62,9 @@ class SCarNotAuth(BaseModel):
 
 
 class STechMaintenance(BaseModel):
-    car_id: int = Field(..., description="ID машины")
-    service_company_id: int = Field(..., description="ID сервисной компании")
-    maintenance_type_id: int = Field(..., description="ID вида ТО")
+    id: int = Field(..., description="ID машины")
+    service_company: int = Field(..., description="ID сервисной компании")
+    maintenance_type: int = Field(..., description="ID вида ТО")
     maintenance_date: date = Field(..., description="Дата проведения ТО")
     operating_time: int = Field(..., description="Наработка мото/часов")
     order: str = Field(..., description="Номер заказа-наряда")

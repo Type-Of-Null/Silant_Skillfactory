@@ -1,3 +1,5 @@
+import React from "react";
+
 export const customStyles = {
   headCells: {
     style: {
@@ -16,7 +18,7 @@ export const customStyles = {
   },
 };
 
-export const generalColumns = () => ([
+export const generalColumns = (opts = {}) => ([
   {
     name: "#",
     cell: (row, index) => index + 1,
@@ -34,6 +36,18 @@ export const generalColumns = () => ([
     sortable: true,
     grow: 1,
     wrap: true,
+    cell: (r) =>
+      React.createElement(
+        "button",
+        {
+          type: "button",
+          className: "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          onClick: () => opts.onVehicleModelClick?.({ id: r.vehicle_model_id, name: r.vehicle_model }),
+          disabled: !r.vehicle_model_id,
+          title: r.vehicle_model_id ? "Нажмите для подробного описания" : "ID модели отсутствует",
+        },
+        r.vehicle_model,
+      ),
   },
   {
     name: "Модель двигателя",

@@ -20,7 +20,7 @@ export const useApi = () => {
     }
   }, []);
 
-  // Готовые методы для разных HTTP методов
+  // Методы для разных HTTP методов
   const get = useCallback((url, timeout) => callApi(apiClient.get, url, timeout), [callApi]);
   const post = useCallback((url, data, timeout) => callApi(apiClient.post, url, data, timeout), [callApi]);
   const put = useCallback((url, data, timeout) => callApi(apiClient.put, url, data, timeout), [callApi]);

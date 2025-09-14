@@ -287,7 +287,7 @@ const MainAuth = () => {
             aria-label="Панель фильтров"
             title="Панель фильтров"
           >
-            {showFilters ? "✕ Скрыть фильтрацию" : "▶ Фильтрация"}
+            {showFilters ? "✕ Скрыть фильтрацию" : "◀ Фильтрация"}
           </button>
         </div>
       </div>
