@@ -7,8 +7,8 @@ import { useAuth } from "../../../contexts/AuthContext";
 const General_info = ({ activeTab, filters = {} }) => {
   const [rows, setRows] = useState([]);
   const { loading, error, get, clearError } = useApi();
-  const { user } = useAuth();
-
+  const { hasRole } = useAuth();
+	const canEdit = hasRole("manager");
   const [modelModalOpen, setModelModalOpen] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
   const [modelError, setModelError] = useState("");
@@ -174,9 +174,9 @@ const General_info = ({ activeTab, filters = {} }) => {
                         Закрыть
                       </button>
                     )}
-                    {user?.role === "manager" && !editMode && (
+                    {canEdit && !editMode && (
                       <>
-                        <button
+                        <button 
                           type="button"
                           className="rounded bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white hover:bg-[#1c4f8a]"
                           onClick={() => setEditMode(true)}
@@ -185,7 +185,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         </button>
                       </>
                     )}
-                    {user?.role === "manager" && editMode && (
+                    {canEdit && editMode && (
                       <>
                         <button
                           type="button"
@@ -195,14 +195,13 @@ const General_info = ({ activeTab, filters = {} }) => {
                           Отмена
                         </button>
                         <button
-                          type="button"
+                          type="button" 
                           className="rounded bg-green-600 px-3 py-1 text-sm font-semibold text-white hover:bg-green-700"
                           onClick={async () => {
                             if (!modelData.id) return;
                             setModelLoading(true);
                             setModelError("");
                             try {
-                              // Reuse apiClient via useApi.callApi (we have only get here), so use fetch directly fallback
                               const resp = await fetch(`http://localhost:8000/api/models/vehicle/${modelData.id}`, {
                                 method: "PUT",
                                 headers: { "Content-Type": "application/json" },
