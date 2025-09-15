@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import DataTable from "react-data-table-component";
+import { apiClient } from "../../../utils/fetchWithTimeout";
 import { generalColumns, customStyles, generalFilterRows } from "./config";
 import { useApi } from "../../../hooks/useApi";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -23,35 +24,28 @@ const General_info = ({ activeTab, filters = {} }) => {
 
   const baseIndex = (page - 1) * perPage;
 
-  const handleVehicleModelClick = useCallback(
-    async ({ id }) => {
-      if (!id) return;
-      setModelModalOpen(true);
-      setEditMode(false);
-      setModelError("");
-      setModelLoading(true);
-      try {
-        const res = await get(
-          `http://localhost:8000/api/models/vehicle/${id}`,
-          10000,
-        );
-        if (res.success) {
-          setModelData({
-            id: res.data.id,
-            name: res.data.name,
-            description: res.data.description || "",
-          });
-        } else {
-          setModelError(res.message || "Не удалось загрузить данные модели");
-        }
-      } catch (e) {
-        setModelError(e.message || "Не удалось загрузить данные модели");
-      } finally {
-        setModelLoading(false);
-      }
-    },
-    [get],
-  );
+  const handleVehicleModelClick = useCallback(async ({ id }) => {
+    if (!id) return;
+    setModelModalOpen(true);
+    setEditMode(false);
+    setModelError("");
+    setModelLoading(true);
+    try {
+      const data = await apiClient.get(
+        `http://localhost:8000/api/models/vehicle/${id}`,
+        10000,
+      );
+      setModelData({
+        id: data.id,
+        name: data.name,
+        description: data.description || "",
+      });
+    } catch (e) {
+      setModelError(e.message || "Не удалось загрузить данные модели");
+    } finally {
+      setModelLoading(false);
+    }
+  }, []);
 
   // Кэшируем столбцы и отфильтрованные строки
   const columns = useMemo(
@@ -124,12 +118,12 @@ const General_info = ({ activeTab, filters = {} }) => {
               setPage(p);
             }}
             paginationRowsPerPageOptions={[10, 25, 50, 100]}
-						paginationComponentOptions={{
-							rowsPerPageText: "Строк на странице",
-							rangeSeparatorText: "из",
-							selectAllRowsItem: true,
-							selectAllRowsItemText: "Все",
-						}}
+            paginationComponentOptions={{
+              rowsPerPageText: "Строк на странице",
+              rangeSeparatorText: "из",
+              selectAllRowsItem: true,
+              selectAllRowsItemText: "Все",
+            }}
             highlightOnHover
             striped
             responsive
