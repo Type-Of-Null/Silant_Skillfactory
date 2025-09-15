@@ -6,8 +6,12 @@ import { useApi } from "../../../hooks/useApi";
 const Maintenance = ({ activeTab, filters = {} }) => {
   const [maintRows, setMaintRows] = useState([]);
   const { loading, error, get, clearError } = useApi();
-
-  const columns = useMemo(() => maintColumns(), []);
+  // Состояние пагинации
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+  const baseIndex = (page - 1) * perPage;
+	// Генерация столбцов с учетом пагинации
+  const columns = useMemo(() => maintColumns({baseIndex}), [baseIndex]);
   const filteredRows = useMemo(
     () => maintenancefilteredRows(maintRows, filters),
     [maintRows, filters],
@@ -61,8 +65,19 @@ const Maintenance = ({ activeTab, filters = {} }) => {
             }
             customStyles={customStyles}
             pagination
-            paginationPerPage={10}
+            paginationPerPage={perPage}
+            onChangePage={(p) => setPage(p)}
+            onChangeRowsPerPage={(newPerPage, p) => {
+              setPerPage(newPerPage);
+              setPage(p);
+            }}
             paginationRowsPerPageOptions={[10, 25, 50, 100]}
+						paginationComponentOptions={{
+							rowsPerPageText: "Строк на странице",
+							rangeSeparatorText: "из",
+							selectAllRowsItem: true,
+							selectAllRowsItemText: "Все",
+						}}
             highlightOnHover
             striped
             responsive

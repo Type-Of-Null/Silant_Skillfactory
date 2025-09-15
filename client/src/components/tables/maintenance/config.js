@@ -16,10 +16,10 @@ export const customStyles = {
   },
 };
 
-export const maintColumns = () => [
+export const maintColumns = (opts = {}) => [
   {
     name: "#",
-    cell: (row, index) => index + 1,
+    cell: (row, index) => (opts.baseIndex ?? 0) + index + 1,
     width: "64px",
     grow: 0,
     center: true,

@@ -8,42 +8,65 @@ const General_info = ({ activeTab, filters = {} }) => {
   const [rows, setRows] = useState([]);
   const { loading, error, get, clearError } = useApi();
   const { hasRole } = useAuth();
-	const canEdit = hasRole("manager");
+  const canEdit = hasRole("manager");
   const [modelModalOpen, setModelModalOpen] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
   const [modelError, setModelError] = useState("");
-  const [modelData, setModelData] = useState({ id: null, name: "", description: "" });
+  const [modelData, setModelData] = useState({
+    id: null,
+    name: "",
+    description: "",
+  });
   const [editMode, setEditMode] = useState(false);
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
 
+  const baseIndex = (page - 1) * perPage;
 
-  const handleVehicleModelClick = useCallback(async ({ id }) => {
-    if (!id) return;
-    setModelModalOpen(true);
-    setEditMode(false);
-    setModelError("");
-    setModelLoading(true);
-    try {
-      const res = await get(`http://localhost:8000/api/models/vehicle/${id}`, 10000);
-      if (res.success) {
-        setModelData({ id: res.data.id, name: res.data.name, description: res.data.description || "" });
-      } else {
-        setModelError(res.message || "Не удалось загрузить данные модели");
+  const handleVehicleModelClick = useCallback(
+    async ({ id }) => {
+      if (!id) return;
+      setModelModalOpen(true);
+      setEditMode(false);
+      setModelError("");
+      setModelLoading(true);
+      try {
+        const res = await get(
+          `http://localhost:8000/api/models/vehicle/${id}`,
+          10000,
+        );
+        if (res.success) {
+          setModelData({
+            id: res.data.id,
+            name: res.data.name,
+            description: res.data.description || "",
+          });
+        } else {
+          setModelError(res.message || "Не удалось загрузить данные модели");
+        }
+      } catch (e) {
+        setModelError(e.message || "Не удалось загрузить данные модели");
+      } finally {
+        setModelLoading(false);
       }
-    } catch (e) {
-      setModelError(e.message || "Не удалось загрузить данные модели");
-    } finally {
-      setModelLoading(false);
-    }
-  }, [get]);
-	
+    },
+    [get],
+  );
+
   // Кэшируем столбцы и отфильтрованные строки
-  const columns = useMemo(() => generalColumns({ onVehicleModelClick: handleVehicleModelClick }), [handleVehicleModelClick]);
+  const columns = useMemo(
+    () =>
+      generalColumns({
+        onVehicleModelClick: handleVehicleModelClick,
+        baseIndex,
+      }),
+    [handleVehicleModelClick, baseIndex],
+  );
   const filteredRows = useMemo(
     () => generalFilterRows(rows, filters),
     [rows, filters],
   );
 
-	
   useEffect(() => {
     let cancelled = false;
     if (activeTab !== "general") return;
@@ -94,8 +117,19 @@ const General_info = ({ activeTab, filters = {} }) => {
             }
             customStyles={customStyles}
             pagination
-            paginationPerPage={10}
+            paginationPerPage={perPage}
+            onChangePage={(p) => setPage(p)}
+            onChangeRowsPerPage={(newPerPage, p) => {
+              setPerPage(newPerPage);
+              setPage(p);
+            }}
             paginationRowsPerPageOptions={[10, 25, 50, 100]}
+						paginationComponentOptions={{
+							rowsPerPageText: "Строк на странице",
+							rangeSeparatorText: "из",
+							selectAllRowsItem: true,
+							selectAllRowsItemText: "Все",
+						}}
             highlightOnHover
             striped
             responsive
@@ -108,7 +142,9 @@ const General_info = ({ activeTab, filters = {} }) => {
             <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4">
               <div className="w-full max-w-lg rounded-md bg-white shadow-xl">
                 <div className="flex items-center justify-between border-b px-4 py-3">
-                  <h3 className="text-lg font-semibold text-[#163E6C]">Модель техники</h3>
+                  <h3 className="text-lg font-semibold text-[#163E6C]">
+                    Модель техники
+                  </h3>
                   <button
                     type="button"
                     className="rounded px-2 py-1 text-sm text-gray-600 hover:bg-gray-100"
@@ -119,41 +155,67 @@ const General_info = ({ activeTab, filters = {} }) => {
                 </div>
                 <div className="px-4 py-3">
                   {modelLoading ? (
-                    <div className="py-6 text-center text-gray-600">Загрузка...</div>
+                    <div className="py-6 text-center text-gray-600">
+                      Загрузка...
+                    </div>
                   ) : (
                     <>
                       {modelError && (
-                        <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-2 text-sm text-red-700">{modelError}</div>
+                        <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-2 text-sm text-red-700">
+                          {modelError}
+                        </div>
                       )}
 
                       {!editMode ? (
                         <div className="space-y-2">
                           <div>
-                            <div className="text-xs text-gray-500">Название</div>
-                            <div className="text-base font-medium">{modelData.name}</div>
+                            <div className="text-xs text-gray-500">
+                              Название
+                            </div>
+                            <div className="text-base font-medium">
+                              {modelData.name}
+                            </div>
                           </div>
                           <div>
-                            <div className="text-xs text-gray-500">Описание</div>
-                            <div className="whitespace-pre-wrap text-sm">{modelData.description || "—"}</div>
+                            <div className="text-xs text-gray-500">
+                              Описание
+                            </div>
+                            <div className="text-sm whitespace-pre-wrap">
+                              {modelData.description || "—"}
+                            </div>
                           </div>
                         </div>
                       ) : (
                         <div className="space-y-3">
                           <div>
-                            <label className="mb-1 block text-xs text-gray-600">Название</label>
+                            <label className="mb-1 block text-xs text-gray-600">
+                              Название
+                            </label>
                             <input
                               type="text"
                               value={modelData.name}
-                              onChange={(e) => setModelData((m) => ({ ...m, name: e.target.value }))}
+                              onChange={(e) =>
+                                setModelData((m) => ({
+                                  ...m,
+                                  name: e.target.value,
+                                }))
+                              }
                               className="w-full rounded border border-gray-300 px-2 py-1"
                             />
                           </div>
                           <div>
-                            <label className="mb-1 block text-xs text-gray-600">Описание</label>
+                            <label className="mb-1 block text-xs text-gray-600">
+                              Описание
+                            </label>
                             <textarea
                               rows={4}
                               value={modelData.description}
-                              onChange={(e) => setModelData((m) => ({ ...m, description: e.target.value }))}
+                              onChange={(e) =>
+                                setModelData((m) => ({
+                                  ...m,
+                                  description: e.target.value,
+                                }))
+                              }
                               className="w-full rounded border border-gray-300 px-2 py-1"
                             />
                           </div>
@@ -163,7 +225,9 @@ const General_info = ({ activeTab, filters = {} }) => {
                   )}
                 </div>
                 <div className="flex items-center justify-between gap-2 border-t px-4 py-3">
-                  <div className="text-xs text-gray-500">ID: {modelData.id ?? "—"}</div>
+                  <div className="text-xs text-gray-500">
+                    ID: {modelData.id ?? "—"}
+                  </div>
                   <div className="flex items-center gap-2">
                     {!editMode && (
                       <button
@@ -176,7 +240,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                     )}
                     {canEdit && !editMode && (
                       <>
-                        <button 
+                        <button
                           type="button"
                           className="rounded bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white hover:bg-[#1c4f8a]"
                           onClick={() => setEditMode(true)}
@@ -195,24 +259,38 @@ const General_info = ({ activeTab, filters = {} }) => {
                           Отмена
                         </button>
                         <button
-                          type="button" 
+                          type="button"
                           className="rounded bg-green-600 px-3 py-1 text-sm font-semibold text-white hover:bg-green-700"
                           onClick={async () => {
                             if (!modelData.id) return;
                             setModelLoading(true);
                             setModelError("");
                             try {
-                              const resp = await fetch(`http://localhost:8000/api/models/vehicle/${modelData.id}`, {
-                                method: "PUT",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ name: modelData.name, description: modelData.description }),
-                              });
+                              const resp = await fetch(
+                                `http://localhost:8000/api/models/vehicle/${modelData.id}`,
+                                {
+                                  method: "PUT",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({
+                                    name: modelData.name,
+                                    description: modelData.description,
+                                  }),
+                                },
+                              );
                               if (!resp.ok) {
                                 const err = await resp.json().catch(() => ({}));
-                                throw new Error(err.detail || "Ошибка сохранения");
+                                throw new Error(
+                                  err.detail || "Ошибка сохранения",
+                                );
                               }
                               const saved = await resp.json();
-                              setModelData({ id: saved.id, name: saved.name, description: saved.description || "" });
+                              setModelData({
+                                id: saved.id,
+                                name: saved.name,
+                                description: saved.description || "",
+                              });
                               setEditMode(false);
                             } catch (e) {
                               setModelError(e.message || "Ошибка сохранения");
@@ -232,12 +310,19 @@ const General_info = ({ activeTab, filters = {} }) => {
                             setModelLoading(true);
                             setModelError("");
                             try {
-                              const respDel = await fetch(`http://localhost:8000/api/models/vehicle/${modelData.id}`, {
-                                method: "DELETE",
-                              });
+                              const respDel = await fetch(
+                                `http://localhost:8000/api/models/vehicle/${modelData.id}`,
+                                {
+                                  method: "DELETE",
+                                },
+                              );
                               if (!respDel.ok) {
-                                const err = await respDel.json().catch(() => ({}));
-                                throw new Error(err.detail || "Ошибка удаления");
+                                const err = await respDel
+                                  .json()
+                                  .catch(() => ({}));
+                                throw new Error(
+                                  err.detail || "Ошибка удаления",
+                                );
                               }
                               setModelModalOpen(false);
                             } catch (e) {
