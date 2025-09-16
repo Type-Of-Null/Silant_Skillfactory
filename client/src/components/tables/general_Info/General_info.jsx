@@ -11,6 +11,8 @@ const General_info = ({ activeTab, filters = {} }) => {
   const { loading, error, get, clearError } = useApi();
   const { hasRole } = useAuth();
   const canEdit = hasRole("manager");
+
+  // Параметры модального окна: Техника
   const [modelModalOpen, setModelModalOpen] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
   const [modelError, setModelError] = useState("");
@@ -20,45 +22,86 @@ const General_info = ({ activeTab, filters = {} }) => {
     description: "",
   });
   const [editMode, setEditMode] = useState(false);
+
+  // Параметры модального окна: Двигатель
+  const [engineModalOpen, setEngineModalOpen] = useState(false);
+  const [engineLoading, setEngineLoading] = useState(false);
+  const [engineError, setEngineError] = useState("");
+  const [engineData, setEngineData] = useState({
+    id: null,
+    name: "",
+    description: "",
+  });
+  const [engineEditMode, setEngineEditMode] = useState(false);
+
+  // Параметры пагинации
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-
   const baseIndex = (page - 1) * perPage;
 
-  const handleVehicleModelClick = useCallback(async ({ id }) => {
-    if (!id) return;
-    setModelModalOpen(true);
-    setEditMode(false);
-    setModelError("");
-    setModelLoading(true);
-    try {
-      const data = await apiClient.get(
-        `http://localhost:8000/api/models/vehicle/${id}`,
-        10000,
-      );
-      setModelData({
-        id: data.id,
-        name: data.name,
-        description: data.description || "",
-      });
-    } catch (e) {
-      setModelError(e.message || "Не удалось загрузить данные модели");
-    } finally {
-      setModelLoading(false);
-    }
-  }, []);
+  // Обработчики для разных типов моделей
+  const handlersByEndpoint = useMemo(
+    () => ({
+      vehicle: {
+        setOpen: setModelModalOpen,
+        setEditMode,
+        setError: setModelError,
+        setLoading: setModelLoading,
+        setData: setModelData,
+        fetchPath: (id) => `http://localhost:8000/api/models/vehicle/${id}`,
+      },
+      engine: {
+        setOpen: setEngineModalOpen,
+        setEditMode: setEngineEditMode,
+        setError: setEngineError,
+        setLoading: setEngineLoading,
+        setData: setEngineData,
+        fetchPath: (id) => `http://localhost:8000/api/models/engine/${id}`,
+      },
+      // transmission, drive-axle, steering-axle добавите по аналогии
+    }),
+    [],
+  );
 
-	
+  const openModel = useCallback(
+    async (endpoint, id, displayName) => {
+      if (!id) return;
+      const h = handlersByEndpoint[endpoint];
+      if (!h) return;
+
+      h.setOpen(true);
+      h.setEditMode(false);
+      h.setError("");
+      h.setLoading(true);
+      try {
+        const data = await apiClient.get(h.fetchPath(id), 10000);
+        h.setData({
+          id: data.id,
+          name: data.name,
+          description: data.description || "",
+        });
+      } catch (e) {
+        h.setError(
+          e.message ||
+            `Не удалось загрузить данные (${displayName || endpoint})`,
+        );
+      } finally {
+        h.setLoading(false);
+      }
+    },
+    [handlersByEndpoint],
+  );
 
   // Кэшируем столбцы и отфильтрованные строки
   const columns = useMemo(
     () =>
       generalColumns({
-        onVehicleModelClick: handleVehicleModelClick,
         baseIndex,
+        openModel, // единый обработчик
       }),
-    [handleVehicleModelClick, baseIndex],
+    [baseIndex, openModel],
   );
+
   const filteredRows = useMemo(
     () => generalFilterRows(rows, filters),
     [rows, filters],
@@ -73,7 +116,7 @@ const General_info = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
-						console.log(data);
+            console.log(data);
             setRows(Array.isArray(data) ? data : []);
           } else {
             setRows([]);
@@ -134,7 +177,9 @@ const General_info = ({ activeTab, filters = {} }) => {
             defaultSortFieldId="shipment_date"
             defaultSortAsc={false}
           />
+
           <ModelDetailsModal
+            title="Модель техники"
             open={modelModalOpen}
             loading={modelLoading}
             error={modelError}
@@ -179,6 +224,56 @@ const General_info = ({ activeTab, filters = {} }) => {
                 setModelError(e.message || "Ошибка сохранения");
               } finally {
                 setModelLoading(false);
+              }
+            }}
+          />
+					
+          <ModelDetailsModal
+            title="Модель двигателя"
+            open={engineModalOpen}
+            loading={engineLoading}
+            error={engineError}
+            data={engineData}
+            editMode={engineEditMode}
+            canEdit={canEdit}
+            onClose={() => setEngineModalOpen(false)}
+            onStartEdit={() => setEngineEditMode(true)}
+            onCancelEdit={() => setEngineEditMode(false)}
+            onChangeName={(v) => setEngineData((m) => ({ ...m, name: v }))}
+            onChangeDescription={(v) =>
+              setEngineData((m) => ({ ...m, description: v }))
+            }
+            onSave={async () => {
+              if (!engineData.id) return;
+              setEngineLoading(true);
+              setEngineError("");
+              try {
+                const resp = await fetch(
+                  `http://localhost:8000/api/models/engine/${engineData.id}`,
+                  {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      name: engineData.name,
+                      description: engineData.description,
+                    }),
+                  },
+                );
+                if (!resp.ok) {
+                  const err = await resp.json().catch(() => ({}));
+                  throw new Error(err.detail || "Ошибка сохранения");
+                }
+                const saved = await resp.json();
+                setEngineData({
+                  id: saved.id,
+                  name: saved.name,
+                  description: saved.description || "",
+                });
+                setEngineEditMode(false);
+              } catch (e) {
+                setEngineError(e.message || "Ошибка сохранения");
+              } finally {
+                setEngineLoading(false);
               }
             }}
           />

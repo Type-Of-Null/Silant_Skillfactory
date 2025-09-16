@@ -18,10 +18,10 @@ export const customStyles = {
   },
 };
 
-export const generalColumns = (opts = {}) => ([
+export const generalColumns = (opts = {}) => [
   {
     name: "#",
-		cell: (row, index) => (opts.baseIndex ?? 0) + index + 1,
+    cell: (row, index) => (opts.baseIndex ?? 0) + index + 1,
     width: "64px",
     grow: 0,
     center: true,
@@ -41,10 +41,16 @@ export const generalColumns = (opts = {}) => ([
         "button",
         {
           type: "button",
-          className: "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
-          onClick: () => opts.onVehicleModelClick?.({ id: r.vehicle_model_id, name: r.vehicle_model }),
+          className:
+            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          onClick: (e) => {
+            e.stopPropagation();
+            opts.openModel?.("vehicle", r.vehicle_model_id, r.vehicle_model);
+          },
           disabled: !r.vehicle_model_id,
-          title: r.vehicle_model_id ? "Нажмите для подробного описания" : "ID модели отсутствует",
+          title: r.vehicle_model_id
+            ? "Нажмите для подробного описания"
+            : "ID модели отсутствует",
         },
         r.vehicle_model,
       ),
@@ -55,15 +61,22 @@ export const generalColumns = (opts = {}) => ([
     sortable: true,
     grow: 1,
     wrap: true,
-		cell: (r) =>
+    ignoreRowClick: true,
+    cell: (r) =>
       React.createElement(
         "button",
         {
           type: "button",
-          className: "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
-          onClick: () => opts.onEngineModelClick?.({ id: r.engine_model_id, name: r.engine_model }),
+          className:
+            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          onClick: (e) => {
+            e.stopPropagation();
+            opts.openModel?.("engine", r.engine_model_id, r.engine_model);
+          },
           disabled: !r.engine_model_id,
-          title: r.engine_model_id ? "Нажмите для подробного описания" : "ID модели отсутствует",
+          title: r.engine_model_id
+            ? "Нажмите для подробного описания"
+            : "ID модели отсутствует",
         },
         r.engine_model,
       ),
@@ -167,7 +180,7 @@ export const generalColumns = (opts = {}) => ([
     grow: 1,
     wrap: true,
   },
-]);
+];
 
 export const generalFilterRows = (rows, filters) => {
   const f = {
