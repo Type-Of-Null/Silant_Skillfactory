@@ -16,13 +16,7 @@ class LoginResponse(BaseModel):
     class Config:
         from_attributes = True
 
-class SNameDescription(BaseModel):
-    id: int = Field(..., description="Идентификатор записи")
-    name: str = Field(..., description="Название")
-    description: str | None = Field(None, description="Описание")
 
-    class Config:
-        from_attributes = True
 
 
 class SCar(BaseModel):

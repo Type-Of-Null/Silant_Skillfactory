@@ -55,6 +55,18 @@ export const generalColumns = (opts = {}) => ([
     sortable: true,
     grow: 1,
     wrap: true,
+		cell: (r) =>
+      React.createElement(
+        "button",
+        {
+          type: "button",
+          className: "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          onClick: () => opts.onEngineModelClick?.({ id: r.engine_model_id, name: r.engine_model }),
+          disabled: !r.engine_model_id,
+          title: r.engine_model_id ? "Нажмите для подробного описания" : "ID модели отсутствует",
+        },
+        r.engine_model,
+      ),
   },
   {
     name: "Зав. № двигателя",

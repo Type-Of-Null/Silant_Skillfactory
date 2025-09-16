@@ -2,6 +2,7 @@ import ModalBase from "../ui/ModalBase";
 
 const ModelDetailsModal = ({
   open,
+  title,
   loading,
   error,
   data,
@@ -59,7 +60,7 @@ const ModelDetailsModal = ({
   );
 
   return (
-    <ModalBase open={open} title="Модель техники" onClose={onClose} footer={footer}>
+    <ModalBase open={open} title={title} onClose={onClose} footer={footer}>
       {loading ? (
         <div className="py-6 text-center text-gray-600">Загрузка...</div>
       ) : (
@@ -86,7 +87,9 @@ const ModelDetailsModal = ({
           ) : (
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-xs text-gray-600">Название</label>
+                <label className="mb-1 block text-xs text-gray-600">
+                  Название
+                </label>
                 <input
                   type="text"
                   value={data?.name ?? ""}
@@ -95,7 +98,9 @@ const ModelDetailsModal = ({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-gray-600">Описание</label>
+                <label className="mb-1 block text-xs text-gray-600">
+                  Описание
+                </label>
                 <textarea
                   rows={4}
                   value={data?.description ?? ""}
