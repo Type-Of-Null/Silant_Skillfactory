@@ -45,7 +45,6 @@ const Header = () => {
           <div className="flex justify-end">
             {user ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium">{user.username}</span>
                 <button
                   onClick={handleLogout}
                   className="bg-[#D20A11] px-4 py-2 text-white transition-colors hover:bg-gray-300"

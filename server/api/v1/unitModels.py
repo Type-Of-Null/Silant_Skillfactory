@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from database import get_db
-from models import VehicleModel, EngineModel, TransmissionModel, DriveAxleModel, SteeringAxleModel
+from models import VehicleModel, EngineModel, TransmissionModel, DriveAxleModel, SteeringAxleModel, CarModel
 
 router = APIRouter(prefix="/models", tags=["models"])
 
@@ -58,6 +58,14 @@ async def update_vehicle_model(model_id: int, payload: ModelUpdateRequest, db: A
 
 @router.delete("/vehicle/{model_id}")
 async def delete_vehicle_model(model_id: int, db: AsyncSession = Depends(get_db)):
+    # Do not allow deletion if there are cars referencing this model to avoid FK violations
+    refs = await db.execute(select(CarModel.id).where(CarModel.vehicle_model_id == model_id).limit(1))
+    if refs.first() is not None:
+        raise HTTPException(
+            status_code=409,
+            detail="Невозможно удалить модель: к ней привязаны автомобили. Сначала отвяжите автомобили от этой модели.",
+        )
+
     result = await db.execute(select(VehicleModel).where(VehicleModel.id == model_id))
     model = result.scalar_one_or_none()
     if not model:
