@@ -8,7 +8,12 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from database import get_db
-from models import TechMaintenanceExtendModel, CarModel, TechMaintenanceModel, ServiceCompanyModel
+from models import (
+    TechMaintenanceExtendModel,
+    CarModel,
+    TechMaintenanceModel,
+    ServiceCompanyModel,
+)
 
 router = APIRouter(prefix="/maintenance", tags=["maintenance"])
 
@@ -17,6 +22,7 @@ class MaintenanceResponse(BaseModel):
     id: int
     vin: str
     maintenance_type: str
+    maintenance_type_id: int
     maintenance_date: Optional[str]
     order_number: Optional[str]
     order_date: Optional[str]
@@ -27,8 +33,7 @@ class MaintenanceResponse(BaseModel):
 async def get_maintenance(db: AsyncSession = Depends(get_db)):
     try:
         result = await db.execute(
-            select(TechMaintenanceExtendModel)
-            .options(
+            select(TechMaintenanceExtendModel).options(
                 selectinload(TechMaintenanceExtendModel.car),
                 selectinload(TechMaintenanceExtendModel.maintenance),
                 selectinload(TechMaintenanceExtendModel.service_company),
@@ -42,11 +47,18 @@ async def get_maintenance(db: AsyncSession = Depends(get_db)):
                 {
                     "id": m.id,
                     "vin": m.car.vin if m.car else "",
+                    "maintenance_type_id": m.maintenance.id if m.maintenance else None,
                     "maintenance_type": m.maintenance.name if m.maintenance else "",
-                    "maintenance_date": m.maintenance_date.isoformat() if getattr(m, "maintenance_date", None) else None,
+                    "maintenance_date": m.maintenance_date.isoformat()
+                    if getattr(m, "maintenance_date", None)
+                    else None,
                     "order_number": getattr(m, "order_number", None),
-                    "order_date": m.order_date.isoformat() if getattr(m, "order_date", None) else None,
-                    "service_company": m.service_company.name if m.service_company else "",
+                    "order_date": m.order_date.isoformat()
+                    if getattr(m, "order_date", None)
+                    else None,
+                    "service_company": m.service_company.name
+                    if m.service_company
+                    else "",
                 }
             )
 
@@ -67,20 +79,28 @@ class MaintenanceCreateRequest(BaseModel):
     service_company_id: int = Field(..., description="ID сервисной компании")
 
 
-@router.post("", response_model=MaintenanceResponse, status_code=status.HTTP_201_CREATED)
-async def create_maintenance(payload: MaintenanceCreateRequest, db: AsyncSession = Depends(get_db)):
+@router.post(
+    "", response_model=MaintenanceResponse, status_code=status.HTTP_201_CREATED
+)
+async def create_maintenance(
+    payload: MaintenanceCreateRequest, db: AsyncSession = Depends(get_db)
+):
     # Проверка существования связанных объектов
     car = await db.get(CarModel, payload.car_id)
     if car is None:
         raise HTTPException(status_code=422, detail="Указан несуществующий car_id")
-    
+
     maintenance_type = await db.get(TechMaintenanceModel, payload.maintenance_type_id)
     if maintenance_type is None:
-        raise HTTPException(status_code=422, detail="Указан несуществующий maintenance_type_id")
-    
+        raise HTTPException(
+            status_code=422, detail="Указан несуществующий maintenance_type_id"
+        )
+
     service_company = await db.get(ServiceCompanyModel, payload.service_company_id)
     if service_company is None:
-        raise HTTPException(status_code=422, detail="Указан несуществующий service_company_id")
+        raise HTTPException(
+            status_code=422, detail="Указан несуществующий service_company_id"
+        )
 
     # Преобразование дат
     maintenance_dt = None
@@ -88,7 +108,9 @@ async def create_maintenance(payload: MaintenanceCreateRequest, db: AsyncSession
         try:
             maintenance_dt = _date.fromisoformat(payload.maintenance_date)
         except Exception:
-            raise HTTPException(status_code=422, detail="Неверный формат maintenance_date")
+            raise HTTPException(
+                status_code=422, detail="Неверный формат maintenance_date"
+            )
 
     order_dt = None
     if payload.order_date:

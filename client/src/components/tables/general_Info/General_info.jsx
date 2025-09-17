@@ -29,6 +29,7 @@ const General_info = ({ activeTab, filters = {} }) => {
   const [perPage, setPerPage] = useState(10);
   const baseIndex = (page - 1) * perPage;
 
+  // Добавление новой записи "машина"
   const emptyNewRow = {
     vin: "",
     vehicle_model_id: null,
@@ -52,7 +53,7 @@ const General_info = ({ activeTab, filters = {} }) => {
   const [newRow, setNewRow] = useState(emptyNewRow);
   const [saving, setSaving] = useState(false);
 
-  // Конфигурация модальных окон
+  // Конфигурация модального окна
   const MODAL_CFG = useMemo(
     () => ({
       vehicle: {
@@ -108,8 +109,8 @@ const General_info = ({ activeTab, filters = {} }) => {
   const [clientOpts, setClientOpts] = useState([]);
   const [serviceCompanyOpts, setServiceCompanyOpts] = useState([]);
 
+  // Cписки для селектов при монтировании вкладки
   useEffect(() => {
-    // грузим списки для селектов при монтировании вкладки
     if (activeTab !== "general") return;
     let cancelled = false;
     const loadLists = async () => {
@@ -202,6 +203,7 @@ const General_info = ({ activeTab, filters = {} }) => {
     [rows, filters],
   );
 
+  // Загрузка данных при монтировании вкладки
   useEffect(() => {
     let cancelled = false;
     if (activeTab !== "general") return;
@@ -211,7 +213,6 @@ const General_info = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
-            console.log(data);
             setRows(Array.isArray(data) ? data : []);
           } else {
             setRows([]);

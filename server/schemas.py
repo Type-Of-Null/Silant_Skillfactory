@@ -90,11 +90,3 @@ class STechMaintenance(BaseModel):
     order_date: date = Field(..., description="Дата заказа-наряда")
 
 
-# class MaintenanceResponse(BaseModel):
-#     id: int
-#     vin: str
-#     maintenance_type: str
-#     maintenance_date: Optional[str]
-#     order_number: Optional[str]
-#     order_date: Optional[str]
-#     service_company: str

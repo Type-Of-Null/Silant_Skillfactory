@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import DataTable from "react-data-table-component";
-import { maintColumns, customStyles, maintenancefilteredRows, TABLE_MIN_HEIGHT } from "./config";
+import { apiClient } from "../../../utils/fetchWithTimeout";
 import { useApi } from "../../../hooks/useApi";
 import { useAuth } from "../../../contexts/AuthContext";
+import { maintColumns, customStyles, maintenancefilteredRows } from "./config";
 import { saveModel } from "../../../utils/saveModel";
-import { apiClient } from "../../../utils/fetchWithTimeout";
+import ModelDetailsModal from "../../modals/ModelDetailsModal";
+import NoData from "../../tables/NoDataForTables";
 
 const Maintenance = ({ activeTab, filters = {} }) => {
   const [maintRows, setMaintRows] = useState([]);
@@ -12,7 +14,17 @@ const Maintenance = ({ activeTab, filters = {} }) => {
   const { hasRole } = useAuth();
   const canEdit = hasRole("manager") || hasRole("service") || hasRole("client");
 
-  // Состояние пагинации
+  // Параметры модального окна
+  const [modal, setModal] = useState({
+    open: false,
+    type: null,
+    loading: false,
+    error: "",
+    edit: false,
+    data: { id: null, name: "", description: "" },
+  });
+
+  // Параметры пагинации
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const baseIndex = (page - 1) * perPage;
@@ -26,36 +38,63 @@ const Maintenance = ({ activeTab, filters = {} }) => {
     order_date: "",
     service_company_id: null,
   };
+
+  // Состояние добавления новой записи
   const [isAdding, setIsAdding] = useState(false);
   const [newRow, setNewRow] = useState(emptyNewRow);
   const [saving, setSaving] = useState(false);
+
+  // Конфигурация модального окна
+  const MODAL_CFG = useMemo(
+    () => ({
+      maintenance: {
+        title: "Вид технического обслуживания",
+        getUrl: (id) => `http://localhost:8000/api/models/maintenance-types/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/maintenance-types/${id}`,
+      },
+    }),
+    [],
+  );
+
+  // Ключи для обновления значений моделей при редактировании
+  const MODEL_KEYS = {
+    maintenance: { idKey: "maintenance_type_id", labelKey: "maintenance_type" },
+  };
 
   // Опции для селектов
   const [carOpts, setCarOpts] = useState([]);
   const [maintenanceTypeOpts, setMaintenanceTypeOpts] = useState([]);
   const [serviceCompanyOpts, setServiceCompanyOpts] = useState([]);
-	// Генерация столбцов с учетом пагинации
-  const columns = useMemo(() => maintColumns({baseIndex}), [baseIndex]);
-  const filteredRows = useMemo(
-    () => maintenancefilteredRows(maintRows, filters),
-    [maintRows, filters],
-  );
 
+  // Cписки для селектов при монтировании вкладки
   useEffect(() => {
-    // грузим списки для селектов при монтировании вкладки
     if (activeTab !== "maintenance") return;
     let cancelled = false;
     const loadLists = async () => {
       try {
         const [cars, maintenanceTypes, serviceCompanies] = await Promise.all([
           apiClient.get("http://localhost:8000/api/cars", 10000),
-          apiClient.get("http://localhost:8000/api/models/maintenance-types", 10000),
-          apiClient.get("http://localhost:8000/api/models/service-company", 10000),
+          apiClient.get(
+            "http://localhost:8000/api/models/maintenance-types",
+            10000,
+          ),
+          apiClient.get(
+            "http://localhost:8000/api/models/service-company",
+            10000,
+          ),
         ]);
         if (!cancelled) {
-          setCarOpts(Array.isArray(cars) ? cars.map(c => ({id: c.id, name: c.vin})) : []);
-          setMaintenanceTypeOpts(Array.isArray(maintenanceTypes) ? maintenanceTypes : []);
-          setServiceCompanyOpts(Array.isArray(serviceCompanies) ? serviceCompanies : []);
+          setCarOpts(
+            Array.isArray(cars)
+              ? cars.map((c) => ({ id: c.id, name: c.vin }))
+              : [],
+          );
+          setMaintenanceTypeOpts(
+            Array.isArray(maintenanceTypes) ? maintenanceTypes : [],
+          );
+          setServiceCompanyOpts(
+            Array.isArray(serviceCompanies) ? serviceCompanies : [],
+          );
         }
       } catch (e) {
         console.error(e);
@@ -66,6 +105,69 @@ const Maintenance = ({ activeTab, filters = {} }) => {
       cancelled = true;
     };
   }, [activeTab]);
+
+  // Универсальный обработчик для открытия модального окна
+  const openModel = useCallback(
+    async (type, id, displayName) => {
+      if (!id) {
+        console.log("No id provided");
+        return;
+      }
+      const cfg = MODAL_CFG[type];
+      if (!cfg) {
+        console.log("No config found for type:", type, "Available configs:", Object.keys(MODAL_CFG));
+        return;
+      }
+
+      setModal((m) => ({
+        ...m,
+        open: true,
+        type,
+        edit: false,
+        error: "",
+        loading: true,
+      }));
+      try {
+        const data = await apiClient.get(cfg.getUrl(id), 10000);
+        setModal((m) => ({
+          ...m,
+          loading: false,
+          data: {
+            id: data.id,
+            name: data.name,
+            description: data.description || "",
+          },
+        }));
+      } catch (e) {
+        console.error("Error loading modal data:", e);
+        setModal((m) => ({
+          ...m,
+          loading: false,
+          error:
+            e.message || `Не удалось загрузить данные (${displayName || type})`,
+        }));
+      }
+    },
+    [MODAL_CFG],
+  );
+  const currentCfg = modal.type ? MODAL_CFG[modal.type] : null;
+
+  // Кэшируем столбцы и отфильтрованные строки
+  const columns = useMemo(
+    () => {
+      return maintColumns({ baseIndex, openModel });
+    },
+    [baseIndex, openModel],
+  );
+  const filteredRows = useMemo(
+    () => {
+      const filtered = maintenancefilteredRows(maintRows, filters);
+      return filtered;
+    },
+    [maintRows, filters],
+  );
+
+  // Загрузка данных при монтировании вкладки
   useEffect(() => {
     let cancelled = false;
     if (activeTab !== "maintenance") return;
@@ -77,6 +179,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
             const data = res.data;
             setMaintRows(Array.isArray(data) ? data : []);
           } else {
+            console.log("No maintenance data or failed response");
             setMaintRows([]);
           }
         }
@@ -105,7 +208,6 @@ const Maintenance = ({ activeTab, filters = {} }) => {
           <DataTable
             columns={columns}
             data={filteredRows}
-            progressPending={loading}
             persistTableHead
             subHeader={canEdit}
             subHeaderComponent={
@@ -126,7 +228,9 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                       onChange={(e) =>
                         setNewRow((r) => ({
                           ...r,
-                          car_id: e.target.value ? Number(e.target.value) : null,
+                          car_id: e.target.value
+                            ? Number(e.target.value)
+                            : null,
                         }))
                       }
                     >
@@ -143,7 +247,9 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                       onChange={(e) =>
                         setNewRow((r) => ({
                           ...r,
-                          maintenance_type_id: e.target.value ? Number(e.target.value) : null,
+                          maintenance_type_id: e.target.value
+                            ? Number(e.target.value)
+                            : null,
                         }))
                       }
                     >
@@ -193,7 +299,9 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                       onChange={(e) =>
                         setNewRow((r) => ({
                           ...r,
-                          service_company_id: e.target.value ? Number(e.target.value) : null,
+                          service_company_id: e.target.value
+                            ? Number(e.target.value)
+                            : null,
                         }))
                       }
                     >
@@ -250,22 +358,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                 )}
               </div>
             }
-            progressComponent={
-							<div
-								style={{ minHeight: TABLE_MIN_HEIGHT }}
-								className="py-4 text-center text-gray-600"
-							>
-								Загрузка...
-							</div>
-						}
-						noDataComponent={
-							<div
-								style={{ minHeight: TABLE_MIN_HEIGHT }}
-								className="py-4 text-center text-gray-600"
-							>
-								Нет данных
-							</div>
-						}
+						noDataComponent={null}
             customStyles={customStyles}
             pagination
             paginationPerPage={perPage}
@@ -275,17 +368,73 @@ const Maintenance = ({ activeTab, filters = {} }) => {
               setPage(p);
             }}
             paginationRowsPerPageOptions={[10, 25, 50, 100]}
-						paginationComponentOptions={{
-							rowsPerPageText: "Строк на странице",
-							rangeSeparatorText: "из",
-							selectAllRowsItem: true,
-							selectAllRowsItemText: "Все",
-						}}
+            paginationComponentOptions={{
+              rowsPerPageText: "Строк на странице",
+              rangeSeparatorText: "из",
+              selectAllRowsItem: true,
+              selectAllRowsItemText: "Все",
+            }}
             highlightOnHover
             striped
             responsive
             defaultSortFieldId="maintenance_date"
             defaultSortAsc={false}
+          />
+					{(loading || filteredRows.length === 0) && (
+              <NoData loading={loading} />
+            )}
+          {/* Универсальное модальное окно */}
+          <ModelDetailsModal
+            title={currentCfg?.title ?? "Модель"}
+            open={modal.open}
+            loading={modal.loading}
+            error={modal.error}
+            data={modal.data}
+            editMode={modal.edit}
+            canEdit={canEdit}
+            onClose={() => setModal((m) => ({ ...m, open: false }))}
+            onStartEdit={() => setModal((m) => ({ ...m, edit: true }))}
+            onCancelEdit={() => setModal((m) => ({ ...m, edit: false }))}
+            onChangeName={(v) =>
+              setModal((m) => ({ ...m, data: { ...m.data, name: v } }))
+            }
+            onChangeDescription={(v) =>
+              setModal((m) => ({ ...m, data: { ...m.data, description: v } }))
+            }
+            // Сохранение изменений
+            onSave={async () => {
+              if (!modal.data.id || !modal.type) return;
+              const cfg = MODAL_CFG[modal.type];
+              setModal((m) => ({ ...m, loading: true, error: "" }));
+              try {
+                const saved = await saveModel({
+                  url: cfg.putUrl(modal.data.id),
+                  data: {
+                    name: modal.data.name,
+                    description: modal.data.description,
+                  },
+                  method: "PUT",
+                  timeout: 10000,
+                });
+                setMaintRows((prev) => {
+                  const keys = MODEL_KEYS[modal.type];
+                  if (!keys) return prev;
+                  const { idKey, labelKey } = keys;
+                  return prev.map((r) =>
+                    r[idKey] === modal.data.id
+                      ? { ...r, [labelKey]: saved.name }
+                      : r,
+                  );
+                });
+                setModal((m) => ({ ...m, open: false }));
+              } catch (e) {
+                setModal((m) => ({
+                  ...m,
+                  loading: false,
+                  error: e.message || "Ошибка сохранения",
+                }));
+              }
+            }}
           />
         </div>
       )}

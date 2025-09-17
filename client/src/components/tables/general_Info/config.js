@@ -47,8 +47,7 @@ export const generalColumns = (opts = {}) => [
     grow: 1,
     sortable: false,
     ignoreRowClick: true,
-    allowOverflow: true,
-    center: true,
+    center: "true",
   },
   {
     name: "VIN",
@@ -56,7 +55,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 3,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Модель", "техники"),
@@ -64,7 +63,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 1,
     wrap: true,
-    center: true,
+    center: "true",
     cell: (r) =>
       React.createElement(
         "button",
@@ -90,7 +89,7 @@ export const generalColumns = (opts = {}) => [
     grow: 1.5,
     wrap: true,
     ignoreRowClick: true,
-    center: true,
+    center: "true",
     cell: (r) =>
       React.createElement(
         "button",
@@ -115,7 +114,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 1.5,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Модель", "трансмиссии"),
@@ -124,7 +123,7 @@ export const generalColumns = (opts = {}) => [
     grow: 1.8,
     wrap: true,
     ignoreRowClick: true,
-    center: true,
+    center: "true",
     cell: (r) =>
       React.createElement(
         "button",
@@ -153,7 +152,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 2,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Ведущий", "мост"),
@@ -162,7 +161,7 @@ export const generalColumns = (opts = {}) => [
     grow: 1.4,
     wrap: true,
     ignoreRowClick: true,
-    center: true,
+    center: "true",
     cell: (r) =>
       React.createElement(
         "button",
@@ -191,7 +190,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 1.4,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Управляемый", "мост"),
@@ -200,7 +199,7 @@ export const generalColumns = (opts = {}) => [
     grow: 2,
     wrap: true,
     ignoreRowClick: true,
-    center: true,
+    center: "true",
     cell: (r) =>
       React.createElement(
         "button",
@@ -229,7 +228,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 2,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Договор", "поставки"),
@@ -237,7 +236,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 2,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Дата", "отгрузки"),
@@ -246,7 +245,7 @@ export const generalColumns = (opts = {}) => [
     id: "shipment_date",
     grow: 1.8,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Грузо", "получатель"),
@@ -254,7 +253,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 2,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Адрес", "поставки"),
@@ -262,7 +261,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 1.8,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Комплектация"),
@@ -270,7 +269,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 2.5,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Клиент"),
@@ -278,7 +277,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 2,
     wrap: true,
-    center: true,
+    center: "true",
   },
   {
     name: header("Сервисная", "компания"),
@@ -286,7 +285,7 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 2.5,
     wrap: true,
-    center: true,
+    center: "true",
   },
 ];
 

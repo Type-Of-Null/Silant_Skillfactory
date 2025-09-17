@@ -1,4 +1,17 @@
-export const TABLE_MIN_HEIGHT = "58vh";
+import React from "react";
+
+const header = (namefirst, namelast) =>
+  React.createElement(
+    "span",
+    { className: "text-center" },
+    null,
+    namefirst,
+    React.createElement("br"),
+    namelast,
+  );
+
+const styleClickableRows =
+  "w-full inline-flex justify-center text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]";
 
 export const customStyles = {
   headCells: {
@@ -14,6 +27,7 @@ export const customStyles = {
     style: {
       minHeight: "48px",
       fontSize: "14px",
+      textAlign: "center",
     },
   },
 };
@@ -24,10 +38,9 @@ export const maintColumns = (opts = {}) => [
     cell: (row, index) => (opts.baseIndex ?? 0) + index + 1,
     width: "64px",
     grow: 0,
-    center: true,
+    center: "true",
     sortable: false,
     ignoreRowClick: true,
-    allowOverflow: true,
   },
   {
     name: "Вид ТО",
@@ -35,12 +48,34 @@ export const maintColumns = (opts = {}) => [
     sortable: true,
     grow: 1,
     wrap: true,
+    center: "true",
+    cell: (r) =>
+      React.createElement(
+        "button",
+        {
+          type: "button",
+          className: styleClickableRows,
+          onClick: (e) => {
+            e.stopPropagation();
+            opts.openModel?.(
+              "maintenance",
+              r.maintenance_type_id,
+              r.maintenance_type,
+            );
+          },
+          disabled: !r.maintenance_type_id,
+          title: r.maintenance_type_id
+            ? "Нажмите для подробного описания"
+            : "ID вида ТО отсутствует",
+        },
+        r.maintenance_type,
+      ),
   },
   {
     name: "Дата ТО",
     selector: (r) => r.maintenance_date,
     sortable: true,
-    center: true,
+    center: "true",
     id: "maintenance_date",
     grow: 1,
     wrap: true,
@@ -48,25 +83,26 @@ export const maintColumns = (opts = {}) => [
   {
     name: "Заказ-наряд №",
     selector: (r) => r.order_number,
-    center: true,
+    center: "true",
     sortable: true,
     grow: 1,
     wrap: true,
   },
   {
-    name: "Дата заказа-наряда",
+    name: header("Дата", "заказа-наряда"),
     selector: (r) => r.order_date,
     sortable: true,
-    center: true,
+    center: "true",
     grow: 1,
     wrap: true,
   },
   {
-    name: "Сервисная компания",
+    name: header("Сервисная", "компания"),
     selector: (r) => r.service_company,
     sortable: true,
     grow: 1,
     wrap: true,
+    center: "true",
   },
 ];
 
