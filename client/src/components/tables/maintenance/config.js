@@ -42,6 +42,14 @@ export const maintColumns = (opts = {}) => [
     sortable: false,
     ignoreRowClick: true,
   },
+	{
+		name: "VIN",
+		selector: (r) => r.vin,
+		sortable: true,
+		grow: 1,
+		wrap: true,
+		center: "true",
+	},
   {
     name: "Вид ТО",
     selector: (r) => r.maintenance_type,

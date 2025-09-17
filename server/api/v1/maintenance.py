@@ -21,6 +21,7 @@ router = APIRouter(prefix="/maintenance", tags=["maintenance"])
 class MaintenanceResponse(BaseModel):
     id: int
     vin: str
+    car_id: int
     maintenance_type: str
     maintenance_type_id: int
     maintenance_date: Optional[str]
@@ -46,6 +47,7 @@ async def get_maintenance(db: AsyncSession = Depends(get_db)):
             data.append(
                 {
                     "id": m.id,
+                    "car_id": m.car_id,
                     "vin": m.car.vin if m.car else "",
                     "maintenance_type_id": m.maintenance.id if m.maintenance else None,
                     "maintenance_type": m.maintenance.name if m.maintenance else "",
@@ -135,6 +137,8 @@ async def create_maintenance(
     return {
         "id": maintenance.id,
         "vin": car.vin,
+        "car_id": car.id,
+        "maintenance_type_id": maintenance_type.id,
         "maintenance_type": maintenance_type.name,
         "maintenance_date": maintenance_dt.isoformat() if maintenance_dt else "",
         "order_number": maintenance.order_number or "",

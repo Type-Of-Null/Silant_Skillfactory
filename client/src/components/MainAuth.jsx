@@ -116,14 +116,14 @@ const MainAuth = () => {
                     <button
                       type="button"
                       onClick={clearActiveFilters}
-                      className="rounded bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200"
+                      className=" bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200"
                     >
                       Очистить
                     </button>
                     <button
                       type="button"
                       onClick={() => setShowFilters(false)}
-                      className="rounded bg-[#163E6C] px-2 py-1 text-xs font-semibold text-white hover:bg-[#1c4f8a]"
+                      className=" bg-[#163E6C] px-2 py-1 text-xs font-semibold text-white hover:bg-[#1c4f8a]"
                     >
                       Закрыть
                     </button>
@@ -145,7 +145,7 @@ const MainAuth = () => {
                               vehicle_model: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
                           placeholder="например: ПД3500"
                         />
                       </div>
@@ -162,7 +162,7 @@ const MainAuth = () => {
                               engine_model: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
                           placeholder="например: Г300"
                         />
                       </div>
@@ -179,7 +179,7 @@ const MainAuth = () => {
                               transmission_model: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
                           placeholder="например: АКПП8"
                         />
                       </div>
@@ -196,7 +196,7 @@ const MainAuth = () => {
                               steering_axle_model: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
                           placeholder="например: Carraro"
                         />
                       </div>
@@ -213,7 +213,7 @@ const MainAuth = () => {
                               drive_axle_model: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
                           placeholder="например: ZF"
                         />
                       </div>
@@ -234,7 +234,7 @@ const MainAuth = () => {
                               maintenance_type: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
                           placeholder="например: ТО-1"
                         />
                       </div>
@@ -251,7 +251,7 @@ const MainAuth = () => {
                               vin: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
                           placeholder="VIN/зав. номер"
                         />
                       </div>
@@ -268,8 +268,8 @@ const MainAuth = () => {
                               service_company: e.target.value,
                             }))
                           }
-                          className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-                          placeholder="например: ОАО Сервис"
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
+                          placeholder="например: ООО «СИЙМО ТРЕЙД»"
                         />
                       </div>
                     </>

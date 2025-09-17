@@ -215,15 +215,15 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                 {!isAdding ? (
                   <button
                     type="button"
-                    className="rounded bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
+                    className=" bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
                     onClick={() => setIsAdding(true)}
                   >
-                    + Добавить ТО
+                      + Добавить запись
                   </button>
                 ) : (
                   <>
                     <select
-                      className={`h-[30px] rounded border px-2 py-1 text-sm ${!newRow.car_id ? "border-red-500" : ""}`}
+                      className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.car_id ? "border-red-500" : ""}`}
                       value={newRow.car_id ?? ""}
                       onChange={(e) =>
                         setNewRow((r) => ({
@@ -242,7 +242,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                       ))}
                     </select>
                     <select
-                      className={`h-[30px] rounded border px-2 py-1 text-sm ${!newRow.maintenance_type_id ? "border-red-500" : ""}`}
+                      className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.maintenance_type_id ? "border-red-500" : ""}`}
                       value={newRow.maintenance_type_id ?? ""}
                       onChange={(e) =>
                         setNewRow((r) => ({
@@ -262,7 +262,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                     </select>
                     <input
                       type="date"
-                      className={`rounded border px-2 py-1 text-sm ${!newRow.maintenance_date ? "border-red-500" : ""}`}
+                      className={` border px-2 py-1 text-sm ${!newRow.maintenance_date ? "border-red-500" : ""}`}
                       value={newRow.maintenance_date || ""}
                       onChange={(e) =>
                         setNewRow((r) => ({
@@ -272,7 +272,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                       }
                     />
                     <input
-                      className="rounded border px-2 py-1 text-sm"
+                      className=" border px-2 py-1 text-sm"
                       placeholder="№ заказ-наряда"
                       value={newRow.order_number}
                       onChange={(e) =>
@@ -284,7 +284,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                     />
                     <input
                       type="date"
-                      className={`rounded border px-2 py-1 text-sm ${!newRow.order_date ? "border-red-500" : ""}`}
+                      className={` border px-2 py-1 text-sm ${!newRow.order_date ? "border-red-500" : ""}`}
                       value={newRow.order_date || ""}
                       onChange={(e) =>
                         setNewRow((r) => ({
@@ -294,7 +294,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                       }
                     />
                     <select
-                      className={`h-[30px] rounded border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
+                      className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
                       value={newRow.service_company_id ?? ""}
                       onChange={(e) =>
                         setNewRow((r) => ({
@@ -322,7 +322,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                         !newRow.order_date ||
                         !newRow.service_company_id
                       }
-                      className="rounded bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
+                      className=" bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
                       onClick={async () => {
                         setSaving(true);
                         try {
@@ -346,7 +346,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                     </button>
                     <button
                       type="button"
-                      className="rounded bg-gray-200 px-3 py-1 text-sm"
+                      className=" bg-gray-200 px-3 py-1 text-sm"
                       onClick={() => {
                         setIsAdding(false);
                         setNewRow(emptyNewRow);

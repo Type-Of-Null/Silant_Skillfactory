@@ -251,15 +251,15 @@ const General_info = ({ activeTab, filters = {} }) => {
                   {!isAdding ? (
                     <button
                       type="button"
-                      className="rounded bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
+                      className=" bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
                       onClick={() => setIsAdding(true)}
                     >
-                      + Добавить
+                      + Добавить запись
                     </button>
                   ) : (
                     <>
                       <input
-                        className={`rounded border px-2 py-1 text-sm ${newRow.vin && newRow.vin.length !== 17 ? "border-red-500" : ""}`}
+                        className={` border px-2 py-1 text-sm ${newRow.vin && newRow.vin.length !== 17 ? "border-red-500" : ""}`}
                         placeholder="VIN (17 символов)"
                         value={newRow.vin}
                         maxLength={17}
@@ -274,7 +274,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }}
                       />
                       <select
-                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        className="h-[30px]  border px-2 py-1 text-sm"
                         value={newRow.vehicle_model_id ?? ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -293,7 +293,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                       <select
-                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        className="h-[30px]  border px-2 py-1 text-sm"
                         value={newRow.engine_model_id ?? ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -312,7 +312,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Зав. № двигателя"
                         value={newRow.engine_number}
                         onChange={(e) =>
@@ -323,7 +323,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <select
-                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        className="h-[30px]  border px-2 py-1 text-sm"
                         value={newRow.transmission_model_id ?? ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -342,7 +342,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Зав. № трансмиссии"
                         value={newRow.transmission_number}
                         onChange={(e) =>
@@ -353,7 +353,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <select
-                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        className="h-[30px]  border px-2 py-1 text-sm"
                         value={newRow.drive_axle_model_id ?? ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -372,7 +372,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Зав. № ведущего моста"
                         value={newRow.drive_axle_number}
                         onChange={(e) =>
@@ -383,7 +383,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <select
-                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        className="h-[30px]  border px-2 py-1 text-sm"
                         value={newRow.steering_axle_model_id ?? ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -402,7 +402,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Зав. № управляемого моста"
                         value={newRow.steering_axle_number}
                         onChange={(e) =>
@@ -413,7 +413,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Договор поставки"
                         value={newRow.delivery_agreement}
                         onChange={(e) =>
@@ -425,7 +425,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                       />
                       <input
                         type="date"
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         value={newRow.shipment_date || ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -435,7 +435,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Грузополучатель"
                         value={newRow.recipient}
                         onChange={(e) =>
@@ -446,7 +446,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Адрес поставки"
                         value={newRow.delivery_address}
                         onChange={(e) =>
@@ -457,7 +457,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <input
-                        className="rounded border px-2 py-1 text-sm"
+                        className=" border px-2 py-1 text-sm"
                         placeholder="Комплектация"
                         value={newRow.equipment}
                         onChange={(e) =>
@@ -468,7 +468,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         }
                       />
                       <select
-                        className={`h-[30px] rounded border px-2 py-1 text-sm ${!newRow.client_id ? "border-red-500" : ""}`}
+                        className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.client_id ? "border-red-500" : ""}`}
                         value={newRow.client_id ?? ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -487,7 +487,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                       <select
-                        className={`h-[30px] rounded border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
+                        className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
                         value={newRow.service_company_id ?? ""}
                         onChange={(e) =>
                           setNewRow((r) => ({
@@ -526,7 +526,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                           !newRow.client_id ||
                           !newRow.service_company_id
                         }
-                        className="rounded bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
+                        className=" bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
                         onClick={async () => {
                           if (!newRow.vin) return;
                           setSaving(true);
@@ -551,7 +551,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                       </button>
                       <button
                         type="button"
-                        className="rounded bg-gray-200 px-3 py-1 text-sm"
+                        className=" bg-gray-200 px-3 py-1 text-sm"
                         onClick={() => {
                           setIsAdding(false);
                           setNewRow(emptyNewRow);
