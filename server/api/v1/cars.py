@@ -77,6 +77,7 @@ async def get_all_cars(db: AsyncSession = Depends(get_db)):
 
         return [
             {
+                "id": car.id,
                 "vin": car.vin,
                 "vehicle_model_id": car.vehicle_model.id if car.vehicle_model else None,
                 "vehicle_model": car.vehicle_model.name if car.vehicle_model else "Не указано",

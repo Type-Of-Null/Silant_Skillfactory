@@ -15,6 +15,7 @@ from models import (
     SteeringAxleModel,
     Client,
     ServiceCompanyModel,
+    TechMaintenanceModel,
     CarModel,
 )
 
@@ -77,6 +78,13 @@ async def list_service_companies(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(ServiceCompanyModel))
     items = result.scalars().all()
     return [{"id": s.id, "name": s.name} for s in items]
+
+
+@router.get("/maintenance-types")
+async def list_maintenance_types(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(TechMaintenanceModel))
+    items = result.scalars().all()
+    return [{"id": m.id, "name": m.name} for m in items]
 
 
 class ModelUpdateRequest(BaseModel):
