@@ -6,6 +6,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { generalColumns, customStyles, generalFilterRows } from "./config";
 import { saveModel } from "../../../utils/saveModel";
 import ModelDetailsModal from "../../modals/ModelDetailsModal";
+import NoData from "../../tables/NoDataForTables"
 
 const General_info = ({ activeTab, filters = {} }) => {
   const [rows, setRows] = useState([]);
@@ -27,6 +28,7 @@ const General_info = ({ activeTab, filters = {} }) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const baseIndex = (page - 1) * perPage;
+
 
   // Конфигурация модальных окон
   const MODAL_CFG = useMemo(
@@ -60,7 +62,7 @@ const General_info = ({ activeTab, filters = {} }) => {
     [],
   );
 
-	// Ключи для обновления значений моделей при редактировании
+  // Ключи для обновления значений моделей при редактировании
   const MODEL_KEYS = {
     vehicle: { idKey: "vehicle_model_id", labelKey: "vehicle_model" },
     engine: { idKey: "engine_model_id", labelKey: "engine_model" },
@@ -129,6 +131,7 @@ const General_info = ({ activeTab, filters = {} }) => {
     [rows, filters],
   );
 
+
   useEffect(() => {
     let cancelled = false;
     if (activeTab !== "general") return;
@@ -166,91 +169,91 @@ const General_info = ({ activeTab, filters = {} }) => {
               {error}
             </div>
           )}
+          <div className="relative">
+            <DataTable
+              columns={columns}
+              data={filteredRows}
+              persistTableHead
+              noDataComponent={null}
+              customStyles={customStyles}
+              pagination
+              paginationPerPage={perPage}
+              onChangePage={(p) => setPage(p)}
+              onChangeRowsPerPage={(newPerPage, p) => {
+                setPerPage(newPerPage);
+                setPage(p);
+              }}
+              paginationRowsPerPageOptions={[10, 25, 50, 100]}
+              paginationComponentOptions={{
+                rowsPerPageText: "Строк на странице",
+                rangeSeparatorText: "из",
+                selectAllRowsItem: true,
+                selectAllRowsItemText: "Все",
+              }}
+              highlightOnHover
+              striped
+              responsive
+              defaultSortFieldId="shipment_date"
+              defaultSortAsc={false}
+            />
+            {(loading || filteredRows.length === 0) && (
+              <NoData loading={loading} />
+            )}
 
-          <DataTable
-            columns={columns}
-            data={filteredRows}
-            progressPending={loading}
-            persistTableHead
-            progressComponent={
-              <div className="py-4 text-center text-gray-600">Загрузка...</div>
-            }
-            noDataComponent={
-              <div className="py-4 text-center text-gray-600">Нет данных</div>
-            }
-            customStyles={customStyles}
-            pagination
-            paginationPerPage={perPage}
-            onChangePage={(p) => setPage(p)}
-            onChangeRowsPerPage={(newPerPage, p) => {
-              setPerPage(newPerPage);
-              setPage(p);
-            }}
-            paginationRowsPerPageOptions={[10, 25, 50, 100]}
-            paginationComponentOptions={{
-              rowsPerPageText: "Строк на странице",
-              rangeSeparatorText: "из",
-              selectAllRowsItem: true,
-              selectAllRowsItemText: "Все",
-            }}
-            highlightOnHover
-            striped
-            responsive
-            defaultSortFieldId="shipment_date"
-            defaultSortAsc={false}
-          />
-
-          {/* Универсальное модальное окно */}
-          <ModelDetailsModal
-            title={currentCfg?.title ?? "Модель"}
-            open={modal.open}
-            loading={modal.loading}
-            error={modal.error}
-            data={modal.data}
-            editMode={modal.edit}
-            canEdit={canEdit}
-            onClose={() => setModal((m) => ({ ...m, open: false }))}
-            onStartEdit={() => setModal((m) => ({ ...m, edit: true }))}
-            onCancelEdit={() => setModal((m) => ({ ...m, edit: false }))}
-            onChangeName={(v) =>
-              setModal((m) => ({ ...m, data: { ...m.data, name: v } }))
-            }
-            onChangeDescription={(v) =>
-              setModal((m) => ({ ...m, data: { ...m.data, description: v } }))
-            }
-						// Сохранение изменений
-            onSave={async () => {
-              if (!modal.data.id || !modal.type) return;
-              const cfg = MODAL_CFG[modal.type];
-              setModal((m) => ({ ...m, loading: true, error: "" }));
-              try {
-                const saved = await saveModel({
-                  url: cfg.putUrl(modal.data.id),
-                  data: {
-                    name: modal.data.name,
-                    description: modal.data.description,
-                  },
-                  method: "PUT",
-                  timeout: 10000,
-                });
-								setRows((prev) => {
-									const keys = MODEL_KEYS[modal.type];
-									if (!keys) return prev;
-									const { idKey, labelKey } = keys;
-									return prev.map((r) =>
-										r[idKey] === modal.data.id ? { ...r, [labelKey]: saved.name } : r,
-									);
-								});
-								setModal((m) => ({ ...m, open: false }));
-              } catch (e) {
-                setModal((m) => ({
-                  ...m,
-                  loading: false,
-                  error: e.message || "Ошибка сохранения",
-                }));
+            {/* Универсальное модальное окно */}
+            <ModelDetailsModal
+              title={currentCfg?.title ?? "Модель"}
+              open={modal.open}
+              loading={modal.loading}
+              error={modal.error}
+              data={modal.data}
+              editMode={modal.edit}
+              canEdit={canEdit}
+              onClose={() => setModal((m) => ({ ...m, open: false }))}
+              onStartEdit={() => setModal((m) => ({ ...m, edit: true }))}
+              onCancelEdit={() => setModal((m) => ({ ...m, edit: false }))}
+              onChangeName={(v) =>
+                setModal((m) => ({ ...m, data: { ...m.data, name: v } }))
               }
-            }}
-          />
+              onChangeDescription={(v) =>
+                setModal((m) => ({ ...m, data: { ...m.data, description: v } }))
+              }
+              // Сохранение изменений
+              onSave={async () => {
+                if (!modal.data.id || !modal.type) return;
+                const cfg = MODAL_CFG[modal.type];
+                setModal((m) => ({ ...m, loading: true, error: "" }));
+                try {
+                  const saved = await saveModel({
+                    url: cfg.putUrl(modal.data.id),
+                    data: {
+                      name: modal.data.name,
+                      description: modal.data.description,
+                    },
+                    method: "PUT",
+                    timeout: 10000,
+                  });
+                  setRows((prev) => {
+                    const keys = MODEL_KEYS[modal.type];
+                    if (!keys) return prev;
+                    const { idKey, labelKey } = keys;
+                    return prev.map((r) =>
+                      r[idKey] === modal.data.id
+                        ? { ...r, [labelKey]: saved.name }
+                        : r,
+                    );
+                  });
+                  setModal((m) => ({ ...m, open: false }));
+                } catch (e) {
+                  setModal((m) => ({
+                    ...m,
+                    loading: false,
+                    error: e.message || "Ошибка сохранения",
+                  }));
+                }
+              }}
+            />
+          </div>
         </>
       )}
     </div>

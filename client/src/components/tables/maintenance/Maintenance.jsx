@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DataTable from "react-data-table-component";
-import { maintColumns, customStyles, maintenancefilteredRows } from "./config";
+import { maintColumns, customStyles, maintenancefilteredRows, TABLE_MIN_HEIGHT } from "./config";
 import { useApi } from "../../../hooks/useApi";
 
 const Maintenance = ({ activeTab, filters = {} }) => {
@@ -58,11 +58,21 @@ const Maintenance = ({ activeTab, filters = {} }) => {
             progressPending={loading}
             persistTableHead
             progressComponent={
-              <div className="py-4 text-center text-gray-600">Загрузка...</div>
-            }
-            noDataComponent={
-              <div className="py-4 text-center text-gray-600">Нет данных</div>
-            }
+							<div
+								style={{ minHeight: TABLE_MIN_HEIGHT }}
+								className="py-4 text-center text-gray-600"
+							>
+								Загрузка...
+							</div>
+						}
+						noDataComponent={
+							<div
+								style={{ minHeight: TABLE_MIN_HEIGHT }}
+								className="py-4 text-center text-gray-600"
+							>
+								Нет данных
+							</div>
+						}
             customStyles={customStyles}
             pagination
             paginationPerPage={perPage}

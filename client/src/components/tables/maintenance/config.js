@@ -1,3 +1,5 @@
+export const TABLE_MIN_HEIGHT = "58vh";
+
 export const customStyles = {
   headCells: {
     style: {

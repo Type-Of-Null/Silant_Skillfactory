@@ -33,7 +33,7 @@ const Header = () => {
         <div className="container mx-auto grid grid-cols-3 items-center">
           <div className="flex justify-start">
             <Link to="/" className="flex items-center">
-              <img className="w-1/3" src={logo} alt="Service Center Logo" />
+              <img className="w-1/3 max-md:w-2/3" src={logo} alt="Service Center Logo" />
             </Link>
           </div>
 

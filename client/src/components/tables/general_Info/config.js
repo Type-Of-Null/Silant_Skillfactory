@@ -1,6 +1,25 @@
 import React from "react";
 
+const header = (namefirst, namelast) =>
+  React.createElement(
+    "span",
+    { className: "text-center" },
+    null,
+    namefirst,
+    React.createElement("br"),
+    namelast,
+  );
+
+const styleClickableRows =
+  "w-full inline-flex justify-center text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]";
+
 export const customStyles = {
+  table: {
+    style: {
+      minWidth: "2500px",
+			minHeight: "500px",
+    },
+  },
   headCells: {
     style: {
       backgroundColor: "#163E6C",
@@ -8,41 +27,50 @@ export const customStyles = {
       fontWeight: 600,
       fontSize: "14px",
       minHeight: "80px",
+      whiteSpace: "normal",
     },
   },
   rows: {
     style: {
       minHeight: "48px",
       fontSize: "14px",
+      textAlign: "center",
     },
   },
 };
 
 export const generalColumns = (opts = {}) => [
   {
-    name: "#",
+    name: header("#"),
     cell: (row, index) => (opts.baseIndex ?? 0) + index + 1,
     width: "64px",
-    grow: 0,
-    center: true,
+    grow: 1,
     sortable: false,
     ignoreRowClick: true,
     allowOverflow: true,
+    center: true,
   },
-  { name: "VIN", selector: (r) => r.vin, sortable: true, grow: 1, wrap: true },
   {
-    name: "Модель техники",
+    name: "VIN",
+    selector: (r) => r.vin,
+    sortable: true,
+    grow: 3,
+    wrap: true,
+    center: true,
+  },
+  {
+    name: header("Модель", "техники"),
     selector: (r) => r.vehicle_model,
     sortable: true,
     grow: 1,
     wrap: true,
+    center: true,
     cell: (r) =>
       React.createElement(
         "button",
         {
           type: "button",
-          className:
-            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          className: styleClickableRows,
           onClick: (e) => {
             e.stopPropagation();
             opts.openModel?.("vehicle", r.vehicle_model_id, r.vehicle_model);
@@ -56,19 +84,19 @@ export const generalColumns = (opts = {}) => [
       ),
   },
   {
-    name: "Модель двигателя",
+    name: header("Модель", "двигателя"),
     selector: (r) => r.engine_model,
     sortable: true,
-    grow: 1,
+    grow: 1.5,
     wrap: true,
     ignoreRowClick: true,
+    center: true,
     cell: (r) =>
       React.createElement(
         "button",
         {
           type: "button",
-          className:
-            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          className: styleClickableRows,
           onClick: (e) => {
             e.stopPropagation();
             opts.openModel?.("engine", r.engine_model_id, r.engine_model);
@@ -82,26 +110,27 @@ export const generalColumns = (opts = {}) => [
       ),
   },
   {
-    name: "Зав. № двигателя",
+    name: header("Зав. №", "двигателя"),
     selector: (r) => r.engine_number,
     sortable: true,
-    grow: 1,
+    grow: 1.5,
     wrap: true,
+    center: true,
   },
   {
-    name: "Модель трансмиссии",
+    name: header("Модель", "трансмиссии"),
     selector: (r) => r.transmission_model,
     sortable: true,
-    grow: 1,
+    grow: 1.8,
     wrap: true,
     ignoreRowClick: true,
+    center: true,
     cell: (r) =>
       React.createElement(
         "button",
         {
           type: "button",
-          className:
-            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          className: styleClickableRows,
           onClick: (e) => {
             e.stopPropagation();
             opts.openModel?.(
@@ -119,26 +148,27 @@ export const generalColumns = (opts = {}) => [
       ),
   },
   {
-    name: "Зав. № трансмиссии",
+    name: header("Зав. №", "трансмиссии"),
     selector: (r) => r.transmission_number,
     sortable: true,
-    grow: 1,
+    grow: 2,
     wrap: true,
+    center: true,
   },
   {
-    name: "Ведущий мост",
+    name: header("Ведущий", "мост"),
     selector: (r) => r.drive_axle_model,
     sortable: true,
-    grow: 1,
+    grow: 1.4,
     wrap: true,
-		ignoreRowClick: true,
+    ignoreRowClick: true,
+    center: true,
     cell: (r) =>
       React.createElement(
         "button",
         {
           type: "button",
-          className:
-            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          className: styleClickableRows,
           onClick: (e) => {
             e.stopPropagation();
             opts.openModel?.(
@@ -156,26 +186,27 @@ export const generalColumns = (opts = {}) => [
       ),
   },
   {
-    name: "Зав. № ведущего моста",
+    name: header("Зав. №", "ведущего моста"),
     selector: (r) => r.drive_axle_number,
     sortable: true,
-    grow: 1,
+    grow: 1.4,
     wrap: true,
+    center: true,
   },
   {
-    name: "Управляемый мост",
+    name: header("Управляемый", "мост"),
     selector: (r) => r.steering_axle_model,
     sortable: true,
-    grow: 1,
+    grow: 2,
     wrap: true,
-		ignoreRowClick: true,
-		cell: (r) =>
+    ignoreRowClick: true,
+    center: true,
+    cell: (r) =>
       React.createElement(
         "button",
         {
           type: "button",
-          className:
-            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          className: styleClickableRows,
           onClick: (e) => {
             e.stopPropagation();
             opts.openModel?.(
@@ -193,61 +224,69 @@ export const generalColumns = (opts = {}) => [
       ),
   },
   {
-    name: "Зав. № управляемого моста",
+    name: header("Зав. №", "управляемого моста"),
     selector: (r) => r.steering_axle_number,
     sortable: true,
-    grow: 1,
+    grow: 2,
     wrap: true,
+    center: true,
   },
   {
-    name: "Дог. поставки",
+    name: header("Договор", "поставки"),
     selector: (r) => r.delivery_agreement,
     sortable: true,
-    grow: 1,
+    grow: 2,
     wrap: true,
+    center: true,
   },
   {
-    name: "Дата отгрузки",
+    name: header("Дата", "отгрузки"),
     selector: (r) => r.shipment_date,
     sortable: true,
     id: "shipment_date",
-    grow: 1,
+    grow: 1.8,
     wrap: true,
+    center: true,
   },
   {
-    name: "Грузополучатель",
+    name: header("Грузо", "получатель"),
     selector: (r) => r.recipient,
     sortable: true,
-    grow: 1,
+    grow: 2,
     wrap: true,
+    center: true,
   },
   {
-    name: "Адрес поставки",
+    name: header("Адрес", "поставки"),
     selector: (r) => r.delivery_address,
     sortable: true,
-    grow: 1,
+    grow: 1.8,
     wrap: true,
+    center: true,
   },
   {
-    name: "Комплектация",
+    name: header("Комплектация"),
     selector: (r) => r.equipment,
     sortable: true,
-    grow: 1,
+    grow: 2.5,
     wrap: true,
+    center: true,
   },
   {
-    name: "Клиент",
+    name: header("Клиент"),
     selector: (r) => r.client,
     sortable: true,
-    grow: 1,
+    grow: 2,
     wrap: true,
+    center: true,
   },
   {
-    name: "Сервисная компания",
+    name: header("Сервисная", "компания"),
     selector: (r) => r.service_company,
     sortable: true,
-    grow: 1,
+    grow: 2.5,
     wrap: true,
+    center: true,
   },
 ];
 
@@ -261,9 +300,7 @@ export const generalFilterRows = (rows, filters) => {
     steering_axle_model: (filters?.steering_axle_model || "")
       .trim()
       .toLowerCase(),
-    drive_axle_model: (filters?.drive_axle_model || "")
-      .trim()
-      .toLowerCase(),
+    drive_axle_model: (filters?.drive_axle_model || "").trim().toLowerCase(),
   };
 
   return rows.filter((r) => {

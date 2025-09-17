@@ -53,10 +53,10 @@ const MainAuth = () => {
 
         {/* Заголовки вкладок */}
         <div className="mb-4 border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+          <nav className="-mb-px flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-8">
             <button
               onClick={() => setActiveTab("general")}
-              className={`border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
+              className={`self-center border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
                 activeTab === "general"
                   ? "border-[#D20A11] text-[#D20A11]"
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
@@ -66,7 +66,7 @@ const MainAuth = () => {
             </button>
             <button
               onClick={() => setActiveTab("maintenance")}
-              className={`border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
+              className={`self-center border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
                 activeTab === "maintenance"
                   ? "border-[#D20A11] text-[#D20A11]"
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
@@ -76,7 +76,7 @@ const MainAuth = () => {
             </button>
             <button
               onClick={() => setActiveTab("claims")}
-              className={`border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
+              className={`self-center border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
                 activeTab === "claims"
                   ? "border-[#D20A11] text-[#D20A11]"
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
@@ -282,7 +282,7 @@ const MainAuth = () => {
           <button
             type="button"
             onClick={() => setShowFilters((s) => !s)}
-            className="block ml-auto bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
+            className="ml-auto block bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
             aria-label="Панель фильтров"
             title="Панель фильтров"
           >
