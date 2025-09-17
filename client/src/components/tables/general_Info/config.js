@@ -94,6 +94,29 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 1,
     wrap: true,
+    ignoreRowClick: true,
+    cell: (r) =>
+      React.createElement(
+        "button",
+        {
+          type: "button",
+          className:
+            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          onClick: (e) => {
+            e.stopPropagation();
+            opts.openModel?.(
+              "transmission",
+              r.transmission_model_id,
+              r.transmission_model,
+            );
+          },
+          disabled: !r.transmission_model_id,
+          title: r.transmission_model_id
+            ? "Нажмите для подробного описания"
+            : "ID модели отсутствует",
+        },
+        r.transmission_model,
+      ),
   },
   {
     name: "Зав. № трансмиссии",
@@ -104,10 +127,33 @@ export const generalColumns = (opts = {}) => [
   },
   {
     name: "Ведущий мост",
-    selector: (r) => r.drive_axle,
+    selector: (r) => r.drive_axle_model,
     sortable: true,
     grow: 1,
     wrap: true,
+		ignoreRowClick: true,
+    cell: (r) =>
+      React.createElement(
+        "button",
+        {
+          type: "button",
+          className:
+            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          onClick: (e) => {
+            e.stopPropagation();
+            opts.openModel?.(
+              "drive_axle",
+              r.drive_axle_model_id,
+              r.drive_axle_model,
+            );
+          },
+          disabled: !r.drive_axle_model_id,
+          title: r.drive_axle_model_id
+            ? "Нажмите для подробного описания"
+            : "ID модели отсутствует",
+        },
+        r.drive_axle_model,
+      ),
   },
   {
     name: "Зав. № ведущего моста",
@@ -118,7 +164,7 @@ export const generalColumns = (opts = {}) => [
   },
   {
     name: "Управляемый мост",
-    selector: (r) => r.steering_axle,
+    selector: (r) => r.steering_axle_model,
     sortable: true,
     grow: 1,
     wrap: true,

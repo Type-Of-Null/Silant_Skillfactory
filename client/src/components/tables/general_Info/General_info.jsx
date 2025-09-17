@@ -15,7 +15,7 @@ const General_info = ({ activeTab, filters = {} }) => {
   // Параметры модального окна
   const [modal, setModal] = useState({
     open: false,
-    type: null, // 'vehicle' | 'engine' | ...
+    type: null,
     loading: false,
     error: "",
     edit: false,
@@ -40,10 +40,39 @@ const General_info = ({ activeTab, filters = {} }) => {
         getUrl: (id) => `http://localhost:8000/api/models/engine/${id}`,
         putUrl: (id) => `http://localhost:8000/api/models/engine/${id}`,
       },
-      // transmission, drive-axle, steering-axle добавите по аналогии
+      transmission: {
+        title: "Модель трансмиссии",
+        getUrl: (id) => `http://localhost:8000/api/models/transmission/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/transmission/${id}`,
+      },
+      drive_axle: {
+        title: "Модель ведущего моста",
+        getUrl: (id) => `http://localhost:8000/api/models/drive-axle/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/drive-axle/${id}`,
+      },
+      steering_axle: {
+        title: "Модель управляемого моста",
+        getUrl: (id) => `http://localhost:8000/api/models/steering-axle/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/steering-axle/${id}`,
+      },
     }),
     [],
   );
+
+	// Ключи для обновления значений моделей при редактировании
+  const MODEL_KEYS = {
+    vehicle: { idKey: "vehicle_model_id", labelKey: "vehicle_model" },
+    engine: { idKey: "engine_model_id", labelKey: "engine_model" },
+    transmission: {
+      idKey: "transmission_model_id",
+      labelKey: "transmission_model",
+    },
+    drive_axle: { idKey: "drive_axle_model_id", labelKey: "drive_axle_model" },
+    steering_axle: {
+      idKey: "steering_axle_model_id",
+      labelKey: "steering_axle_model",
+    },
+  };
 
   // Универсальный обработчик для открытия модального окна
   const openModel = useCallback(
@@ -89,7 +118,7 @@ const General_info = ({ activeTab, filters = {} }) => {
     () =>
       generalColumns({
         baseIndex,
-        openModel, // единый обработчик
+        openModel,
       }),
     [baseIndex, openModel],
   );
@@ -170,6 +199,7 @@ const General_info = ({ activeTab, filters = {} }) => {
             defaultSortAsc={false}
           />
 
+          {/* Универсальное модальное окно */}
           <ModelDetailsModal
             title={currentCfg?.title ?? "Модель"}
             open={modal.open}
@@ -187,6 +217,7 @@ const General_info = ({ activeTab, filters = {} }) => {
             onChangeDescription={(v) =>
               setModal((m) => ({ ...m, data: { ...m.data, description: v } }))
             }
+						// Сохранение изменений
             onSave={async () => {
               if (!modal.data.id || !modal.type) return;
               const cfg = MODAL_CFG[modal.type];
@@ -205,16 +236,19 @@ const General_info = ({ activeTab, filters = {} }) => {
                   throw new Error(err.detail || "Ошибка сохранения");
                 }
                 const saved = await resp.json();
-                setModal((m) => ({
-                  ...m,
-                  loading: false,
-                  edit: false,
-                  data: {
-                    id: saved.id,
-                    name: saved.name,
-                    description: saved.description || "",
-                  },
-                }));
+
+                setRows((prev) => {
+                  const keys = MODEL_KEYS[modal.type];
+                  if (!keys) return prev;
+                  const { idKey, labelKey } = keys;
+                  return prev.map((r) =>
+                    r[idKey] === modal.data.id
+                      ? { ...r, [labelKey]: saved.name }
+                      : r,
+                  );
+                });
+                setModal((m) => ({ ...m, open: false }));
+
               } catch (e) {
                 setModal((m) => ({
                   ...m,

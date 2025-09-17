@@ -33,6 +33,7 @@ class SCar(BaseModel):
     drive_axle_model: str = Field(..., description="Модель ведущего моста (наименование)")
     drive_axle_number: str = Field(..., description="Заводской номер ведущего моста")
     steering_axle_model_id: int | None = Field(None, description="ID модели управляемого моста")
+    steering_axle_model: str = Field(..., description="Модель управляемого моста (наименование)")
     steering_axle_number: str = Field(..., description="Заводской номер управляемого моста")
     delivery_agreement: str = Field(..., description="Договор поставки, № и дата")
     shipment_date: date | None = Field(None, description="Дата отгрузки с завода")
