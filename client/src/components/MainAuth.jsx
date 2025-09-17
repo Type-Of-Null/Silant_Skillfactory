@@ -48,7 +48,7 @@ const MainAuth = () => {
           {activeTab === "claims" && "Рекламации"}
         </h2>
         <h3 className="mb-6 text-center text-2xl font-bold text-[#163E6C]">
-          {"Вы авторизованы как: " + user.username}
+          Вы авторизованы как: <span className="text-[#D20A11]">{user.name || user.username}</span>
         </h3>
 
         {/* Заголовки вкладок */}

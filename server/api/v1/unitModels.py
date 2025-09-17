@@ -1,3 +1,4 @@
+# moved list endpoints below after router declaration
 from typing import Optional, Dict, Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,6 +13,8 @@ from models import (
     TransmissionModel,
     DriveAxleModel,
     SteeringAxleModel,
+    Client,
+    ServiceCompanyModel,
     CarModel,
 )
 
@@ -25,6 +28,55 @@ class ModelResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Списки моделей для селектов
+@router.get("/vehicle")
+async def list_vehicle_models(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(VehicleModel))
+    items = result.scalars().all()
+    return [{"id": m.id, "name": m.name} for m in items]
+
+
+@router.get("/engine")
+async def list_engine_models(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(EngineModel))
+    items = result.scalars().all()
+    return [{"id": m.id, "name": m.name} for m in items]
+
+
+@router.get("/transmission")
+async def list_transmission_models(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(TransmissionModel))
+    items = result.scalars().all()
+    return [{"id": m.id, "name": m.name} for m in items]
+
+
+@router.get("/drive-axle")
+async def list_drive_axle_models(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(DriveAxleModel))
+    items = result.scalars().all()
+    return [{"id": m.id, "name": m.name} for m in items]
+
+
+@router.get("/steering-axle")
+async def list_steering_axle_models(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(SteeringAxleModel))
+    items = result.scalars().all()
+    return [{"id": m.id, "name": m.name} for m in items]
+
+# Клиенты и сервисные компании
+@router.get("/clients")
+async def list_clients(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Client))
+    items = result.scalars().all()
+    return [{"id": c.id, "name": c.name} for c in items]
+
+
+@router.get("/service-company")
+async def list_service_companies(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(ServiceCompanyModel))
+    items = result.scalars().all()
+    return [{"id": s.id, "name": s.name} for s in items]
 
 
 class ModelUpdateRequest(BaseModel):

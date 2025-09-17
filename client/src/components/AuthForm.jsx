@@ -37,7 +37,15 @@ const AuthForm = ({ onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 p-4 backdrop-blur-sm">
       <div className="w-full max-w-md bg-[#EBE6D6] p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Авторизация</h2>
+          <div className="flex items-center">
+            <h2 className="text-xl font-bold">Авторизация</h2>
+            <div className="group relative">
+              <span className="cursor-help px-2">ℹ️</span>
+              <div className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 transform bg-gray-800 px-2 py-1 text-sm text-center text-white opacity-0 transition-opacity group-hover:opacity-100">
+              Пользователи: manager service1 client1 client2 Пароли аналогичные
+              </div>
+            </div>
+          </div>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"

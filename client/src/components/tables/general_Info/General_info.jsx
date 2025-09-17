@@ -6,7 +6,7 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { generalColumns, customStyles, generalFilterRows } from "./config";
 import { saveModel } from "../../../utils/saveModel";
 import ModelDetailsModal from "../../modals/ModelDetailsModal";
-import NoData from "../../tables/NoDataForTables"
+import NoData from "../../tables/NoDataForTables";
 
 const General_info = ({ activeTab, filters = {} }) => {
   const [rows, setRows] = useState([]);
@@ -29,6 +29,28 @@ const General_info = ({ activeTab, filters = {} }) => {
   const [perPage, setPerPage] = useState(10);
   const baseIndex = (page - 1) * perPage;
 
+  const emptyNewRow = {
+    vin: "",
+    vehicle_model_id: null,
+    engine_model_id: null,
+    engine_number: "",
+    transmission_model_id: null,
+    transmission_number: "",
+    drive_axle_model_id: null,
+    drive_axle_number: "",
+    steering_axle_model_id: null,
+    steering_axle_number: "",
+    delivery_agreement: "",
+    shipment_date: "",
+    recipient: "",
+    delivery_address: "",
+    equipment: "",
+    client_id: null,
+    service_company_id: null,
+  };
+  const [isAdding, setIsAdding] = useState(false);
+  const [newRow, setNewRow] = useState(emptyNewRow);
+  const [saving, setSaving] = useState(false);
 
   // Конфигурация модальных окон
   const MODAL_CFG = useMemo(
@@ -76,6 +98,55 @@ const General_info = ({ activeTab, filters = {} }) => {
       labelKey: "steering_axle_model",
     },
   };
+
+  // Опции для селектов моделей
+  const [vehicleOpts, setVehicleOpts] = useState([]);
+  const [engineOpts, setEngineOpts] = useState([]);
+  const [transmissionOpts, setTransmissionOpts] = useState([]);
+  const [driveAxleOpts, setDriveAxleOpts] = useState([]);
+  const [steeringAxleOpts, setSteeringAxleOpts] = useState([]);
+  const [clientOpts, setClientOpts] = useState([]);
+  const [serviceCompanyOpts, setServiceCompanyOpts] = useState([]);
+
+  useEffect(() => {
+    // грузим списки для селектов при монтировании вкладки
+    if (activeTab !== "general") return;
+    let cancelled = false;
+    const loadLists = async () => {
+      try {
+        const [veh, eng, trn, drv, str, clients, servs] = await Promise.all([
+          apiClient.get("http://localhost:8000/api/models/vehicle", 10000),
+          apiClient.get("http://localhost:8000/api/models/engine", 10000),
+          apiClient.get("http://localhost:8000/api/models/transmission", 10000),
+          apiClient.get("http://localhost:8000/api/models/drive-axle", 10000),
+          apiClient.get(
+            "http://localhost:8000/api/models/steering-axle",
+            10000,
+          ),
+          apiClient.get("http://localhost:8000/api/models/clients", 10000),
+          apiClient.get(
+            "http://localhost:8000/api/models/service-company",
+            10000,
+          ),
+        ]);
+        if (!cancelled) {
+          setVehicleOpts(Array.isArray(veh) ? veh : []);
+          setEngineOpts(Array.isArray(eng) ? eng : []);
+          setTransmissionOpts(Array.isArray(trn) ? trn : []);
+          setDriveAxleOpts(Array.isArray(drv) ? drv : []);
+          setSteeringAxleOpts(Array.isArray(str) ? str : []);
+          setClientOpts(Array.isArray(clients) ? clients : []);
+          setServiceCompanyOpts(Array.isArray(servs) ? servs : []);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadLists();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab]);
 
   // Универсальный обработчик для открытия модального окна
   const openModel = useCallback(
@@ -131,7 +202,6 @@ const General_info = ({ activeTab, filters = {} }) => {
     [rows, filters],
   );
 
-
   useEffect(() => {
     let cancelled = false;
     if (activeTab !== "general") return;
@@ -174,6 +244,324 @@ const General_info = ({ activeTab, filters = {} }) => {
               columns={columns}
               data={filteredRows}
               persistTableHead
+              subHeader={canEdit}
+              subHeaderComponent={
+                <div className="flex w-full flex-wrap items-end gap-2">
+                  {!isAdding ? (
+                    <button
+                      type="button"
+                      className="rounded bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
+                      onClick={() => setIsAdding(true)}
+                    >
+                      + Добавить
+                    </button>
+                  ) : (
+                    <>
+                      <input
+                        className={`rounded border px-2 py-1 text-sm ${newRow.vin && newRow.vin.length !== 17 ? "border-red-500" : ""}`}
+                        placeholder="VIN (17 символов)"
+                        value={newRow.vin}
+                        maxLength={17}
+                        minLength={17}
+                        pattern="^[A-HJ-NPR-Z0-9]{17}$"
+                        title="VIN: 17 символов, без I, O, Q"
+                        onChange={(e) => {
+                          const v = e.target.value
+                            .toUpperCase()
+                            .replace(/\s+/g, "");
+                          setNewRow((r) => ({ ...r, vin: v }));
+                        }}
+                      />
+                      <select
+                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        value={newRow.vehicle_model_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            vehicle_model_id: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          }))
+                        }
+                      >
+                        <option value="">Модель техники</option>
+                        {vehicleOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        value={newRow.engine_model_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            engine_model_id: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          }))
+                        }
+                      >
+                        <option value="">Модель двигателя</option>
+                        {engineOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Зав. № двигателя"
+                        value={newRow.engine_number}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            engine_number: e.target.value,
+                          }))
+                        }
+                      />
+                      <select
+                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        value={newRow.transmission_model_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            transmission_model_id: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          }))
+                        }
+                      >
+                        <option value="">Модель трансмиссии</option>
+                        {transmissionOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Зав. № трансмиссии"
+                        value={newRow.transmission_number}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            transmission_number: e.target.value,
+                          }))
+                        }
+                      />
+                      <select
+                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        value={newRow.drive_axle_model_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            drive_axle_model_id: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          }))
+                        }
+                      >
+                        <option value="">Ведущий мост</option>
+                        {driveAxleOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Зав. № ведущего моста"
+                        value={newRow.drive_axle_number}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            drive_axle_number: e.target.value,
+                          }))
+                        }
+                      />
+                      <select
+                        className="h-[30px] rounded border px-2 py-1 text-sm"
+                        value={newRow.steering_axle_model_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            steering_axle_model_id: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          }))
+                        }
+                      >
+                        <option value="">Управляемый мост</option>
+                        {steeringAxleOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Зав. № управляемого моста"
+                        value={newRow.steering_axle_number}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            steering_axle_number: e.target.value,
+                          }))
+                        }
+                      />
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Договор поставки"
+                        value={newRow.delivery_agreement}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            delivery_agreement: e.target.value,
+                          }))
+                        }
+                      />
+                      <input
+                        type="date"
+                        className="rounded border px-2 py-1 text-sm"
+                        value={newRow.shipment_date || ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            shipment_date: e.target.value,
+                          }))
+                        }
+                      />
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Грузополучатель"
+                        value={newRow.recipient}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            recipient: e.target.value,
+                          }))
+                        }
+                      />
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Адрес поставки"
+                        value={newRow.delivery_address}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            delivery_address: e.target.value,
+                          }))
+                        }
+                      />
+                      <input
+                        className="rounded border px-2 py-1 text-sm"
+                        placeholder="Комплектация"
+                        value={newRow.equipment}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            equipment: e.target.value,
+                          }))
+                        }
+                      />
+                      <select
+                        className={`h-[30px] rounded border px-2 py-1 text-sm ${!newRow.client_id ? "border-red-500" : ""}`}
+                        value={newRow.client_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            client_id: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          }))
+                        }
+                      >
+                        <option value="">Клиент (обязательно)</option>
+                        {clientOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        className={`h-[30px] rounded border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
+                        value={newRow.service_company_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            service_company_id: e.target.value
+                              ? Number(e.target.value)
+                              : null,
+                          }))
+                        }
+                      >
+                        <option value="">
+                          Сервисная компания (обязательно)
+                        </option>
+                        {serviceCompanyOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+
+                      <button
+                        type="button"
+                        disabled={
+                          saving ||
+                          !newRow.vin ||
+                          !newRow.vehicle_model_id ||
+                          !newRow.engine_model_id ||
+                          !newRow.engine_number ||
+                          !newRow.transmission_model_id ||
+                          !newRow.transmission_number ||
+                          !newRow.drive_axle_model_id ||
+                          !newRow.drive_axle_number ||
+                          !newRow.steering_axle_model_id ||
+                          !newRow.steering_axle_number ||
+                          !newRow.shipment_date ||
+                          !newRow.client_id ||
+                          !newRow.service_company_id
+                        }
+                        className="rounded bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
+                        onClick={async () => {
+                          if (!newRow.vin) return;
+                          setSaving(true);
+                          try {
+                            const created = await saveModel({
+                              url: "http://localhost:8000/api/cars",
+                              method: "POST",
+                              data: newRow,
+                              timeout: 12000,
+                            });
+                            setRows((prev) => [created, ...prev]);
+                            setNewRow(emptyNewRow);
+                            setIsAdding(false);
+                          } catch (e) {
+                            alert(e.message || "Ошибка создания записи");
+                          } finally {
+                            setSaving(false);
+                          }
+                        }}
+                      >
+                        Сохранить
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded bg-gray-200 px-3 py-1 text-sm"
+                        onClick={() => {
+                          setIsAdding(false);
+                          setNewRow(emptyNewRow);
+                        }}
+                      >
+                        Отмена
+                      </button>
+                    </>
+                  )}
+                </div>
+              }
               noDataComponent={null}
               customStyles={customStyles}
               pagination
