@@ -4,6 +4,7 @@ import { apiClient } from "../../../utils/fetchWithTimeout";
 import { useApi } from "../../../hooks/useApi";
 import { useAuth } from "../../../contexts/AuthContext";
 import { generalColumns, customStyles, generalFilterRows } from "./config";
+import { saveModel } from "../../../utils/saveModel";
 import ModelDetailsModal from "../../modals/ModelDetailsModal";
 
 const General_info = ({ activeTab, filters = {} }) => {
@@ -223,32 +224,25 @@ const General_info = ({ activeTab, filters = {} }) => {
               const cfg = MODAL_CFG[modal.type];
               setModal((m) => ({ ...m, loading: true, error: "" }));
               try {
-                const resp = await fetch(cfg.putUrl(modal.data.id), {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
+                const saved = await saveModel({
+                  url: cfg.putUrl(modal.data.id),
+                  data: {
                     name: modal.data.name,
                     description: modal.data.description,
-                  }),
+                  },
+                  method: "PUT",
+                  timeout: 10000,
                 });
-                if (!resp.ok) {
-                  const err = await resp.json().catch(() => ({}));
-                  throw new Error(err.detail || "Ошибка сохранения");
-                }
-                const saved = await resp.json();
-
-                setRows((prev) => {
-                  const keys = MODEL_KEYS[modal.type];
-                  if (!keys) return prev;
-                  const { idKey, labelKey } = keys;
-                  return prev.map((r) =>
-                    r[idKey] === modal.data.id
-                      ? { ...r, [labelKey]: saved.name }
-                      : r,
-                  );
-                });
-                setModal((m) => ({ ...m, open: false }));
-
+                setModal((m) => ({
+                  ...m,
+                  loading: false,
+                  edit: false,
+                  data: {
+                    id: saved.id,
+                    name: saved.name,
+                    description: saved.description || "",
+                  },
+                }));
               } catch (e) {
                 setModal((m) => ({
                   ...m,
