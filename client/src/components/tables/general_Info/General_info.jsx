@@ -233,16 +233,15 @@ const General_info = ({ activeTab, filters = {} }) => {
                   method: "PUT",
                   timeout: 10000,
                 });
-                setModal((m) => ({
-                  ...m,
-                  loading: false,
-                  edit: false,
-                  data: {
-                    id: saved.id,
-                    name: saved.name,
-                    description: saved.description || "",
-                  },
-                }));
+								setRows((prev) => {
+									const keys = MODEL_KEYS[modal.type];
+									if (!keys) return prev;
+									const { idKey, labelKey } = keys;
+									return prev.map((r) =>
+										r[idKey] === modal.data.id ? { ...r, [labelKey]: saved.name } : r,
+									);
+								});
+								setModal((m) => ({ ...m, open: false }));
               } catch (e) {
                 setModal((m) => ({
                   ...m,

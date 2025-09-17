@@ -42,12 +42,12 @@ const Main = () => {
         param: "Заводской номер трансмиссии",
         value: carData.transmission_number,
       },
-      { param: "Модель ведущего моста", value: carData.drive_axle },
+      { param: "Модель ведущего моста", value: carData.drive_axle_model },
       {
         param: "Заводской номер ведущего моста",
         value: carData.drive_axle_number,
       },
-      { param: "Модель управляемого моста", value: carData.steering_axle },
+      { param: "Модель управляемого моста", value: carData.steering_axle_model },
       {
         param: "Заводской номер управляемого моста",
         value: carData.steering_axle_number,

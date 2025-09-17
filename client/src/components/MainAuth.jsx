@@ -13,8 +13,8 @@ const MainAuth = () => {
     vehicle_model: "",
     engine_model: "",
     transmission_model: "",
-    steering_axle: "",
-    drive_axle: "",
+    steering_axle_model: "",
+    drive_axle_model: "",
   });
 
   const [maintFilters, setMaintFilters] = useState({
@@ -29,8 +29,8 @@ const MainAuth = () => {
         vehicle_model: "",
         engine_model: "",
         transmission_model: "",
-        steering_axle: "",
-        drive_axle: "",
+        steering_axle_model: "",
+        drive_axle_model: "",
       });
     } else if (activeTab === "maintenance") {
       setMaintFilters({ maintenance_type: "", vin: "", service_company: "" });
@@ -51,7 +51,7 @@ const MainAuth = () => {
           {"Вы авторизованы как: " + user.username}
         </h3>
 
-        {/* Tabs */}
+        {/* Заголовки вкладок */}
         <div className="mb-4 border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
             <button
@@ -88,7 +88,6 @@ const MainAuth = () => {
         </div>
 
         <div className="table-scroll relative bg-white p-4 shadow-md">
-          {/* Content + optional right filter panel */}
           <div className="flex gap-4">
             <div
               className="min-w-0 flex-1 overflow-x-auto"
@@ -147,7 +146,7 @@ const MainAuth = () => {
                             }))
                           }
                           className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-                          placeholder="например: МАЗ"
+                          placeholder="например: ПД3500"
                         />
                       </div>
                       <div>
@@ -164,7 +163,7 @@ const MainAuth = () => {
                             }))
                           }
                           className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-                          placeholder="например: ЯМЗ"
+                          placeholder="например: Г300"
                         />
                       </div>
                       <div>
@@ -181,7 +180,7 @@ const MainAuth = () => {
                             }))
                           }
                           className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
-                          placeholder="например: Allison"
+                          placeholder="например: АКПП8"
                         />
                       </div>
                       <div>
@@ -190,11 +189,11 @@ const MainAuth = () => {
                         </label>
                         <input
                           type="text"
-                          value={generalFilters.steering_axle}
+                          value={generalFilters.steering_axle_model}
                           onChange={(e) =>
                             setGeneralFilters((f) => ({
                               ...f,
-                              steering_axle: e.target.value,
+                              steering_axle_model: e.target.value,
                             }))
                           }
                           className="w-full rounded border border-gray-300 px-2 py-1 text-sm"
@@ -207,11 +206,11 @@ const MainAuth = () => {
                         </label>
                         <input
                           type="text"
-                          value={generalFilters.drive_axle}
+                          value={generalFilters.drive_axle_model}
                           onChange={(e) =>
                             setGeneralFilters((f) => ({
                               ...f,
-                              drive_axle: e.target.value,
+                              drive_axle_model: e.target.value,
                             }))
                           }
                           className="w-full rounded border border-gray-300 px-2 py-1 text-sm"

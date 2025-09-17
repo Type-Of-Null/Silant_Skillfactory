@@ -168,6 +168,29 @@ export const generalColumns = (opts = {}) => [
     sortable: true,
     grow: 1,
     wrap: true,
+		ignoreRowClick: true,
+		cell: (r) =>
+      React.createElement(
+        "button",
+        {
+          type: "button",
+          className:
+            "text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]",
+          onClick: (e) => {
+            e.stopPropagation();
+            opts.openModel?.(
+              "steering_axle",
+              r.steering_axle_model_id,
+              r.steering_axle_model,
+            );
+          },
+          disabled: !r.steering_axle_model_id,
+          title: r.steering_axle_model_id
+            ? "Нажмите для подробного описания"
+            : "ID модели отсутствует",
+        },
+        r.steering_axle_model,
+      ),
   },
   {
     name: "Зав. № управляемого моста",
@@ -235,23 +258,27 @@ export const generalFilterRows = (rows, filters) => {
     transmission_model: (filters?.transmission_model || "")
       .trim()
       .toLowerCase(),
-    steering_axle: (filters?.steering_axle || "").trim().toLowerCase(),
-    drive_axle: (filters?.drive_axle || "").trim().toLowerCase(),
+    steering_axle_model: (filters?.steering_axle_model || "")
+      .trim()
+      .toLowerCase(),
+    drive_axle_model: (filters?.drive_axle_model || "")
+      .trim()
+      .toLowerCase(),
   };
 
   return rows.filter((r) => {
     const vm = String(r.vehicle_model || "").toLowerCase();
     const em = String(r.engine_model || "").toLowerCase();
     const tm = String(r.transmission_model || "").toLowerCase();
-    const sa = String(r.steering_axle || "").toLowerCase();
-    const da = String(r.drive_axle || "").toLowerCase();
+    const sa = String(r.steering_axle_model || "").toLowerCase();
+    const da = String(r.drive_axle_model || "").toLowerCase();
 
     return (
       (!f.vehicle_model || vm.includes(f.vehicle_model)) &&
       (!f.engine_model || em.includes(f.engine_model)) &&
       (!f.transmission_model || tm.includes(f.transmission_model)) &&
-      (!f.steering_axle || sa.includes(f.steering_axle)) &&
-      (!f.drive_axle || da.includes(f.drive_axle))
+      (!f.steering_axle_model || sa.includes(f.steering_axle_model)) &&
+      (!f.drive_axle_model || da.includes(f.drive_axle_model))
     );
   });
 };
