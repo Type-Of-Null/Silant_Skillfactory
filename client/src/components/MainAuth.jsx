@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import General_info from "./tables/general_Info/General_info";
 import Maintenance from "./tables/maintenance/Maintenance";
+import Complaints from "./tables/complaints/Complaints";
 
 const MainAuth = () => {
   const { user } = useAuth();
@@ -23,6 +24,12 @@ const MainAuth = () => {
     service_company: "",
   });
 
+	const [complaintsFilters, setComplaintsFilters] = useState({
+		failure_node: "",
+		recovery_method: "",
+    service_company: "",
+	})
+
   const clearActiveFilters = () => {
     if (activeTab === "general") {
       setGeneralFilters({
@@ -34,6 +41,8 @@ const MainAuth = () => {
       });
     } else if (activeTab === "maintenance") {
       setMaintFilters({ maintenance_type: "", vin: "", service_company: "" });
+    } else if (activeTab === "claims") {
+      setComplaintsFilters({ failure_node: "", recovery_method: "", service_company: "" });
     }
   };
 
@@ -95,11 +104,7 @@ const MainAuth = () => {
             >
               <General_info activeTab={activeTab} filters={generalFilters} />
               <Maintenance activeTab={activeTab} filters={maintFilters} />
-              {activeTab === "claims" && (
-                <div className="py-8 text-center text-gray-600">
-                  Раздел Рекламации в разработке
-                </div>
-              )}
+							<Complaints activeTab={activeTab} filters={complaintsFilters} />
             </div>
             {showFilters && (
               <div className="w-80 border-l border-gray-200 bg-white shadow-inner">

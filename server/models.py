@@ -103,6 +103,7 @@ class ServiceCompanyModel(Base):
 
     maintenance_extend = relationship("TechMaintenanceExtendModel", back_populates="service_company")
     cars = relationship("CarModel", back_populates="service_company_model")
+    complaints = relationship("ComplaintModel", back_populates="service_company")
 
 # Модель "Машина"
 class CarModel(Base):
@@ -178,6 +179,9 @@ class ComplaintModel(Base):
     car = relationship("CarModel", back_populates="complaints")
     node_failure = relationship("FailureNodeModel", back_populates="complaints")
     recovery_method = relationship("RecoveryMethodModel", back_populates="complaints")
+    service_company_id = Column(Integer, ForeignKey("service_company_model.id"), nullable=False)
+
+    service_company = relationship("ServiceCompanyModel", back_populates="complaints")
 
 
 class User(Base):

@@ -128,7 +128,7 @@ export const maintColumns = (opts = {}) => [
           disabled: !r.service_company_id,
           title: r.service_company_id
             ? "Нажмите для подробного описания"
-            : "ID вида ТО отсутствует",
+            : "Сервисная компания отсутствует",
         },
         r.service_company,
       ),
