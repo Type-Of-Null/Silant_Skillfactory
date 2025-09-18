@@ -286,7 +286,7 @@ const MainAuth = () => {
                         </label>
                         <input
                           type="text"
-                          value={complaintsFilters.node}
+                          value={complaintsFilters.node_failure}
                           onChange={(e) =>
                             setComplaintsFilters((f) => ({
                               ...f,
