@@ -100,6 +100,7 @@ async def get_all_cars(db: AsyncSession = Depends(get_db)):
                 "equipment": car.equipment or "",
                 "client": car.client.name if car.client else "",
                 "service_company": car.service_company_model.name if car.service_company_model else "",
+                "service_company_id": car.service_company_model.id if car.service_company_model else None,
             }
             for car in cars
         ]

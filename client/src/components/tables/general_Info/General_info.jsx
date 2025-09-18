@@ -103,7 +103,7 @@ const General_info = ({ activeTab, filters = {} }) => {
       idKey: "steering_axle_model_id",
       labelKey: "steering_axle_model",
     },
-		service_company: { idKey: "service_company_model_id", labelKey: "service_company_model" },
+		service_company: { idKey: "service_company_id", labelKey: "service_company" },
   };
 
   // Опции для селектов моделей
@@ -219,6 +219,7 @@ const General_info = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
+						console.log('Data loaded', data);
             setRows(Array.isArray(data) ? data : []);
           } else {
             setRows([]);

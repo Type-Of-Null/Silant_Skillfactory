@@ -53,7 +53,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
         putUrl: (id) => `http://localhost:8000/api/models/maintenance-types/${id}`,
       },
 			service_company: {
-        title: "Вид технического обслуживания",
+        title: "Сервисная компания",
         getUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
         putUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
       },

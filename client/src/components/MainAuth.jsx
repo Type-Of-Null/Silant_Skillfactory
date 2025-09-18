@@ -7,7 +7,6 @@ import Complaints from "./tables/complaints/Complaints";
 const MainAuth = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("general");
-
   const [showFilters, setShowFilters] = useState(false);
 
   const [generalFilters, setGeneralFilters] = useState({
@@ -41,7 +40,7 @@ const MainAuth = () => {
       });
     } else if (activeTab === "maintenance") {
       setMaintFilters({ maintenance_type: "", vin: "", service_company: "" });
-    } else if (activeTab === "claims") {
+    } else if (activeTab === "complaints") {
       setComplaintsFilters({ failure_node: "", recovery_method: "", service_company: "" });
     }
   };
@@ -54,7 +53,7 @@ const MainAuth = () => {
             "Информация о комплектации и технических характеристиках вашей техники"}
           {activeTab === "maintenance" &&
             "Информация о проведенных ТО вашей техники"}
-          {activeTab === "claims" && "Рекламации"}
+          {activeTab === "complaints" && "Рекламации"}
         </h2>
         <h3 className="mb-6 text-center text-2xl font-bold text-[#163E6C]">
           Вы авторизованы как: <span className="text-[#D20A11]">{user.name || user.username}</span>
@@ -84,9 +83,9 @@ const MainAuth = () => {
               Техническое обслуживание
             </button>
             <button
-              onClick={() => setActiveTab("claims")}
+              onClick={() => setActiveTab("complaints")}
               className={`self-center border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
-                activeTab === "claims"
+                activeTab === "complaints"
                   ? "border-[#D20A11] text-[#D20A11]"
                   : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
               }`}

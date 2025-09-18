@@ -42,14 +42,14 @@ export const maintColumns = (opts = {}) => [
     sortable: false,
     ignoreRowClick: true,
   },
-	{
-		name: "VIN",
-		selector: (r) => r.vin,
-		sortable: true,
-		grow: 1,
-		wrap: true,
-		center: "true",
-	},
+  {
+    name: "VIN",
+    selector: (r) => r.vin,
+    sortable: true,
+    grow: 1,
+    wrap: true,
+    center: "true",
+  },
   {
     name: "Вид ТО",
     selector: (r) => r.maintenance_type,
@@ -111,7 +111,7 @@ export const maintColumns = (opts = {}) => [
     grow: 1,
     wrap: true,
     center: "true",
-		cell: (r) =>
+    cell: (r) =>
       React.createElement(
         "button",
         {
@@ -128,11 +128,10 @@ export const maintColumns = (opts = {}) => [
           disabled: !r.service_company_id,
           title: r.service_company_id
             ? "Нажмите для подробного описания"
-            : "Сервисная компания отсутствует",
+            : "ID модели отсутствует",
         },
         r.service_company,
       ),
-
   },
 ];
 

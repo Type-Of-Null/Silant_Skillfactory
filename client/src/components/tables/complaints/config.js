@@ -91,7 +91,7 @@ export const complaintsColumns = (opts = {}) => [
           disabled: !r.node_failure_id,
           title: r.node_failure_id
             ? "Нажмите для подробного описания"
-            : "Узел отказа отсутствует",
+            : "ID модели отсутствует",
         },
         r.node_failure,
       ),
@@ -128,7 +128,7 @@ export const complaintsColumns = (opts = {}) => [
           disabled: !r.recovery_method_id,
           title: r.recovery_method_id
             ? "Нажмите для подробного описания"
-            : "Способ восстановления отсутствует",
+            : "ID модели отсутствует",
         },
         r.recovery_method,
       ),

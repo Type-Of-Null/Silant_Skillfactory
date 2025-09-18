@@ -293,6 +293,7 @@ export const generalColumns = (opts = {}) => [
           type: "button",
           className: styleClickableRows,
           onClick: (e) => {
+						console.log('Service company clicked', r.service_company_id, r.service_company);
             e.stopPropagation();
             opts.openModel?.(
               "service_company",

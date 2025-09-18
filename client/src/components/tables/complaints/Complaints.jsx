@@ -74,7 +74,7 @@ const Complaints = ({ activeTab, filters = {} }) => {
 
   // Cписки для селектов при монтировании вкладки
   useEffect(() => {
-    if (activeTab !== "maintenance") return;
+    if (activeTab !== "complaints") return;
     let cancelled = false;
     const loadLists = async () => {
       try {
@@ -176,10 +176,10 @@ const Complaints = ({ activeTab, filters = {} }) => {
   // Загрузка данных при монтировании вкладки
   useEffect(() => {
     let cancelled = false;
-    if (activeTab !== "maintenance") return;
+    if (activeTab !== "complaints") return;
     const load = async () => {
       try {
-        const res = await get("http://localhost:8000/api/maintenance", 10000);
+        const res = await get("http://localhost:8000/api/complaints", 10000);
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
@@ -205,7 +205,7 @@ const Complaints = ({ activeTab, filters = {} }) => {
 
   return (
     <div>
-      {activeTab === "maintenance" && (
+      {activeTab === "complaints" && (
         <div className="table-scroll overflow-x-auto overflow-y-hidden">
           {error && (
             <div className="mb-3 border-l-4 border-red-500 bg-red-50 p-3 text-red-700">

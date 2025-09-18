@@ -54,6 +54,7 @@ class SCar(BaseModel):
     equipment: str = Field(..., description="Комплектация доп.опция")
     client: str = Field(..., description="Клиент")
     service_company: str = Field(..., description="Сервисная компания (наименование)")
+    service_company_id: int = Field(..., description="ID сервисной компании")
 
     class Config:
         from_attributes = True
