@@ -173,14 +173,12 @@ class ComplaintModel(Base):
     used_spare_parts = Column(String(255))
     date_recovery = Column(String(255))
     equipment_downtime = Column(String(255))
-    service_company = Column(String(255))
     vehicle_model = Column(String(255))
+    service_company_id = Column(Integer, ForeignKey("service_company_model.id"), nullable=False)
 
     car = relationship("CarModel", back_populates="complaints")
     node_failure = relationship("FailureNodeModel", back_populates="complaints")
     recovery_method = relationship("RecoveryMethodModel", back_populates="complaints")
-    service_company_id = Column(Integer, ForeignKey("service_company_model.id"), nullable=False)
-
     service_company = relationship("ServiceCompanyModel", back_populates="complaints")
 
 

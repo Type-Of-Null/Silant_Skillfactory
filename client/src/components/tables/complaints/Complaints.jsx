@@ -29,13 +29,13 @@ const Complaints = ({ activeTab, filters = {} }) => {
   const [perPage, setPerPage] = useState(10);
   const baseIndex = (page - 1) * perPage;
 
-  // Добавление новой записи ТО
+  // Добавление новой записи рекламации
   const emptyNewRow = {
     car_id: null,
-    maintenance_type_id: null,
-    maintenance_date: "",
-    order_number: "",
-    order_date: "",
+    node_failure_id: null,
+    recovery_method_id: null,
+    failure_date: "",
+    operating_hours: null,
     service_company_id: null,
   };
 
@@ -47,13 +47,18 @@ const Complaints = ({ activeTab, filters = {} }) => {
   // Конфигурация модального окна
   const MODAL_CFG = useMemo(
     () => ({
-      maintenance: {
-        title: "Вид технического обслуживания",
-        getUrl: (id) => `http://localhost:8000/api/models/maintenance-types/${id}`,
-        putUrl: (id) => `http://localhost:8000/api/models/maintenance-types/${id}`,
+      failure_node: {
+        title: "Узел отказа",
+        getUrl: (id) => `http://localhost:8000/api/models/failure-node/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/failure-node/${id}`,
       },
-			service_company: {
-        title: "Вид технического обслуживания",
+      recovery_method: {
+        title: "Способ восстановления",
+        getUrl: (id) => `http://localhost:8000/api/models/recovery-method/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/recovery-method/${id}`,
+      },
+      service_company: {
+        title: "Сервисная компания",
         getUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
         putUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
       },
@@ -63,13 +68,15 @@ const Complaints = ({ activeTab, filters = {} }) => {
 
   // Ключи для обновления значений моделей при редактировании
   const MODEL_KEYS = {
-    maintenance: { idKey: "maintenance_type_id", labelKey: "maintenance_type" },
-		service_company: { idKey: "service_company_id", labelKey: "service_company" },
+    failure_node: { idKey: "node_failure_id", labelKey: "node_failure" },
+    recovery_method: { idKey: "recovery_method_id", labelKey: "recovery_method" },
+    service_company: { idKey: "service_company_id", labelKey: "service_company" },
   };
 
   // Опции для селектов
   const [carOpts, setCarOpts] = useState([]);
-  const [maintenanceTypeOpts, setMaintenanceTypeOpts] = useState([]);
+  const [failureNodeOpts, setFailureNodeOpts] = useState([]);
+  const [recoveryMethodOpts, setRecoveryMethodOpts] = useState([]);
   const [serviceCompanyOpts, setServiceCompanyOpts] = useState([]);
 
   // Cписки для селектов при монтировании вкладки
@@ -78,16 +85,11 @@ const Complaints = ({ activeTab, filters = {} }) => {
     let cancelled = false;
     const loadLists = async () => {
       try {
-        const [cars, maintenanceTypes, serviceCompanies] = await Promise.all([
+        const [cars, failureNodes, recoveryMethods, serviceCompanies] = await Promise.all([
           apiClient.get("http://localhost:8000/api/cars", 10000),
-          apiClient.get(
-            "http://localhost:8000/api/models/maintenance-types",
-            10000,
-          ),
-          apiClient.get(
-            "http://localhost:8000/api/models/service-company",
-            10000,
-          ),
+          apiClient.get("http://localhost:8000/api/models/failure-node", 10000),
+          apiClient.get("http://localhost:8000/api/models/recovery-method", 10000),
+          apiClient.get("http://localhost:8000/api/models/service-company", 10000),
         ]);
         if (!cancelled) {
           setCarOpts(
@@ -95,12 +97,9 @@ const Complaints = ({ activeTab, filters = {} }) => {
               ? cars.map((c) => ({ id: c.id, name: c.vin }))
               : [],
           );
-          setMaintenanceTypeOpts(
-            Array.isArray(maintenanceTypes) ? maintenanceTypes : [],
-          );
-          setServiceCompanyOpts(
-            Array.isArray(serviceCompanies) ? serviceCompanies : [],
-          );
+          setFailureNodeOpts(Array.isArray(failureNodes) ? failureNodes : []);
+          setRecoveryMethodOpts(Array.isArray(recoveryMethods) ? recoveryMethods : []);
+          setServiceCompanyOpts(Array.isArray(serviceCompanies) ? serviceCompanies : []);
         }
       } catch (e) {
         console.error(e);
@@ -249,58 +248,6 @@ const Complaints = ({ activeTab, filters = {} }) => {
                       ))}
                     </select>
                     <select
-                      className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.maintenance_type_id ? "border-red-500" : ""}`}
-                      value={newRow.maintenance_type_id ?? ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          maintenance_type_id: e.target.value
-                            ? Number(e.target.value)
-                            : null,
-                        }))
-                      }
-                    >
-                      <option value="">Тип ТО (обязательно)</option>
-                      {maintenanceTypeOpts.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.name}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="date"
-                      className={` border px-2 py-1 text-sm ${!newRow.maintenance_date ? "border-red-500" : ""}`}
-                      value={newRow.maintenance_date || ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          maintenance_date: e.target.value,
-                        }))
-                      }
-                    />
-                    <input
-                      className=" border px-2 py-1 text-sm"
-                      placeholder="№ заказ-наряда"
-                      value={newRow.order_number}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          order_number: e.target.value,
-                        }))
-                      }
-                    />
-                    <input
-                      type="date"
-                      className={` border px-2 py-1 text-sm ${!newRow.order_date ? "border-red-500" : ""}`}
-                      value={newRow.order_date || ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          order_date: e.target.value,
-                        }))
-                      }
-                    />
-                    <select
                       className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
                       value={newRow.service_company_id ?? ""}
                       onChange={(e) =>
@@ -319,14 +266,75 @@ const Complaints = ({ activeTab, filters = {} }) => {
                         </option>
                       ))}
                     </select>
+                    <select
+                      className="h-[30px] border px-2 py-1 text-sm"
+                      value={newRow.node_failure_id ?? ""}
+                      onChange={(e) =>
+                        setNewRow((r) => ({
+                          ...r,
+                          node_failure_id: e.target.value
+                            ? Number(e.target.value)
+                            : null,
+                        }))
+                      }
+                    >
+                      <option value="">Узел отказа</option>
+                      {failureNodeOpts.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.name}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="h-[30px] border px-2 py-1 text-sm"
+                      value={newRow.recovery_method_id ?? ""}
+                      onChange={(e) =>
+                        setNewRow((r) => ({
+                          ...r,
+                          recovery_method_id: e.target.value
+                            ? Number(e.target.value)
+                            : null,
+                        }))
+                      }
+                    >
+                      <option value="">Способ восстановления</option>
+                      {recoveryMethodOpts.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.name}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="date"
+                      className={`border px-2 py-1 text-sm ${!newRow.failure_date ? "border-red-500" : ""}`}
+                      value={newRow.failure_date || ""}
+                      onChange={(e) =>
+                        setNewRow((r) => ({
+                          ...r,
+                          failure_date: e.target.value,
+                        }))
+                      }
+                    />
+                    <input
+                      type="number"
+                      className="border px-2 py-1 text-sm"
+                      placeholder="Наработка, м/час"
+                      value={newRow.operating_hours || ""}
+                      onChange={(e) =>
+                        setNewRow((r) => ({
+                          ...r,
+                          operating_hours: e.target.value ? Number(e.target.value) : null,
+                        }))
+                      }
+                    />
                     <button
                       type="button"
                       disabled={
                         saving ||
                         !newRow.car_id ||
-                        !newRow.maintenance_type_id ||
-                        !newRow.maintenance_date ||
-                        !newRow.order_date ||
+                        !newRow.node_failure_id ||
+                        !newRow.recovery_method_id ||
+                        !newRow.failure_date ||
                         !newRow.service_company_id
                       }
                       className=" bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
@@ -334,7 +342,7 @@ const Complaints = ({ activeTab, filters = {} }) => {
                         setSaving(true);
                         try {
                           const created = await saveModel({
-                            url: "http://localhost:8000/api/maintenance",
+                            url: "http://localhost:8000/api/complaints",
                             method: "POST",
                             data: newRow,
                             timeout: 12000,
@@ -343,7 +351,7 @@ const Complaints = ({ activeTab, filters = {} }) => {
                           setNewRow(emptyNewRow);
                           setIsAdding(false);
                         } catch (e) {
-                          alert(e.message || "Ошибка создания записи ТО");
+                          alert(e.message || "Ошибка создания записи о рекламации");
                         } finally {
                           setSaving(false);
                         }

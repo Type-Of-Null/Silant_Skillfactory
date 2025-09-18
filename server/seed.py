@@ -2,7 +2,9 @@ import random
 from datetime import datetime, timedelta
 from models import (
     CarModel, VehicleModel, EngineModel, TransmissionModel, 
-    DriveAxleModel, SteeringAxleModel, Client, ServiceCompanyModel
+    DriveAxleModel, SteeringAxleModel, Client, ServiceCompanyModel,
+    TechMaintenanceModel, RecoveryMethodModel, FailureNodeModel,
+    TechMaintenanceExtendModel, ComplaintModel, User, UserRole
 )
 from database import engine, AsyncSessionLocal, Base
 
@@ -78,8 +80,41 @@ CLIENTS = [
 ]
 
 SERVICE_COMPANIES = [
-    "СервисЦентр 'КАМАЗ-Сервис'", "ТехЦентр 'Камский'",
-    "АвтоСервис 'Дизель-Мастер'", "ТехноСервис 'КАМАЗ-Техно'"
+    "Сервис 1",
+    "Сервис 2",
+    "Сервис 3"
+]
+
+# Data for maintenance types
+MAINTENANCE_TYPES = [
+    "ТО-1",
+    "ТО-2",
+    "Сезонное обслуживание",
+    "Технический осмотр"
+]
+
+# Data for failure nodes
+FAILURE_NODES = [
+    "Двигатель",
+    "Трансмиссия",
+    "Ходовая часть",
+    "Электрооборудование",
+    "Тормозная система"
+]
+
+# Data for recovery methods
+RECOVERY_METHODS = [
+    "Ремонт",
+    "Замена",
+    "Восстановление",
+    "Настройка"
+]
+
+# User credentials
+USERS = [
+    {"username": "admin", "password": "admin123", "role": UserRole.manager},
+    {"username": "service1", "password": "service123", "role": UserRole.service, "service_company": "Сервис 1"},
+    {"username": "client1", "password": "client123", "role": UserRole.client, "client": "ООО 'Ромашка'"}
 ]
 
 # Функция для генерации VIN
@@ -158,8 +193,67 @@ async def seed_reference_data(session):
 
 # Функция для заполнения машин
 
+async def seed_users(session, ref_data):
+    users = []
+    for user_data in USERS:
+        user = User(
+            username=user_data['username'],
+            password=user_data['password'],
+            role=user_data['role']
+        )
+        
+        if user_data.get('client'):
+            client = next((c for c in ref_data['clients'] if c.name == user_data['client']), None)
+            if client:
+                user.client_id = client.id
+        
+        if user_data.get('service_company'):
+            company = next((c for c in ref_data['service_companies'] if c.name == user_data['service_company']), None)
+            if company:
+                user.service_company_id = company.id
+        
+        session.add(user)
+        users.append(user)
+    
+    await session.commit()
+    return users
+
+async def seed_maintenance_data(session, ref_data):
+    # Create maintenance types
+    maintenance_types = []
+    for name in MAINTENANCE_TYPES:
+        mt = TechMaintenanceModel(name=name, description=f"Тип ТО: {name}")
+        session.add(mt)
+        maintenance_types.append(mt)
+    
+    # Create failure nodes
+    failure_nodes = []
+    for name in FAILURE_NODES:
+        fn = FailureNodeModel(name=name, description=f"Узел отказа: {name}")
+        session.add(fn)
+        failure_nodes.append(fn)
+    
+    # Create recovery methods
+    recovery_methods = []
+    for name in RECOVERY_METHODS:
+        rm = RecoveryMethodModel(name=name, description=f"Способ восстановления: {name}")
+        session.add(rm)
+        recovery_methods.append(rm)
+    
+    await session.commit()
+    
+    return {
+        'maintenance_types': maintenance_types,
+        'failure_nodes': failure_nodes,
+        'recovery_methods': recovery_methods
+    }
+
 async def seed_cars(session, ref_data):
-    for i in range(50):  # Создаем 50 машин
+    cars = []
+    for i in range(50):  # Create 50 cars
+        client = random.choice(ref_data['clients'])
+        service_company = random.choice(ref_data['service_companies'])
+        
         car = CarModel(
             vin=generate_vin(),
             vehicle_model_id=random.choice(ref_data['vehicle_models']).id,
@@ -173,33 +267,101 @@ async def seed_cars(session, ref_data):
             steering_axle_number=generate_serial_number("SA"),
             delivery_agreement=f"Договор №{random.randint(1000, 9999)} от {datetime.now().strftime('%d.%m.%Y')}",
             shipment_date=datetime.now() - timedelta(days=random.randint(1, 365)),
-            recipient=random.choice(CLIENTS),
-            delivery_address=f"г. {['Москва', 'Санкт-Петербург', 'Казань', 'Екатеринбург', 'Новосибирск'][random.randint(0, 4)]}",
+            recipient=client.name,
+            delivery_address=f"г. {random.choice(['Москва', 'Санкт-Петербург', 'Казань', 'Екатеринбург', 'Новосибирск'])}",
             equipment=f"Комплектация {random.choice(['Стандарт', 'Комфорт', 'Люкс'])}",
-            client_id=random.choice(ref_data['clients']).id,
-            service_company_id=random.choice(ref_data['service_companies']).id
+            client_id=client.id,
+            service_company_id=service_company.id
         )
         session.add(car)
+        cars.append(car)
+    
+    await session.commit()
+    return cars
+
+async def seed_maintenance_records(session, ref_data, cars):
+    maintenance_records = []
+    
+    for car in cars:
+        # Create 1-3 maintenance records per car
+        for _ in range(random.randint(1, 3)):
+            maintenance_date = datetime.now() - timedelta(days=random.randint(1, 180))
+            order_date = maintenance_date - timedelta(days=random.randint(1, 30))
+            
+            record = TechMaintenanceExtendModel(
+                car_id=car.id,
+                maintenance_type_id=random.choice(ref_data['maintenance_types']).id,
+                maintenance_date=maintenance_date,
+                order_number=f"ORD-{random.randint(1000, 9999)}",
+                order_date=order_date,
+                service_company_id=car.service_company_id
+            )
+            session.add(record)
+            maintenance_records.append(record)
+    
+    await session.commit()
+    return maintenance_records
+
+async def seed_complaints(session, ref_data, cars):
+    complaints = []
+    
+    for car in cars:
+        # Create 0-2 complaints per car
+        for _ in range(random.randint(0, 2)):
+            failure_date = datetime.now() - timedelta(days=random.randint(1, 365))
+            recovery_date = failure_date + timedelta(days=random.randint(1, 14))
+            
+            complaint = ComplaintModel(
+                car_id=car.id,
+                date_of_failure=failure_date.strftime("%Y-%m-%d"),
+                operating_time=datetime.now() - timedelta(days=random.randint(30, 365)),
+                node_failure_id=random.choice(ref_data['failure_nodes']).id,
+                description_failure=f"Неисправность в узле {random.choice(FAILURE_NODES)}",
+                recovery_method_id=random.choice(ref_data['recovery_methods']).id,
+                used_spare_parts=random.choice(["Да", "Нет"]),
+                date_recovery=recovery_date.strftime("%Y-%m-%d"),
+                equipment_downtime=str((recovery_date - failure_date).days) + " дней",
+                vehicle_model=car.vehicle_model.name,
+                service_company_id=car.service_company_id
+            )
+            session.add(complaint)
+            complaints.append(complaint)
+    
+    await session.commit()
+    return complaints
     
     await session.commit()
 
 # Основная функция
 
 async def main():
-    # Создаем все таблицы
+    # Create all tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     
-    # Заполняем данные
+    # Fill with data
     async with AsyncSessionLocal() as session:
-        print("Заполняем справочные данные...")
+        print("Filling reference data...")
         ref_data = await seed_reference_data(session)
         
-        print("Заполняем данные по машинам...")
-        await seed_cars(session, ref_data)
+        print("Creating maintenance data...")
+        maintenance_data = await seed_maintenance_data(session, ref_data)
+        ref_data.update(maintenance_data)
         
-        print("Данные успешно заполнены!")
+        print("Creating users...")
+        await seed_users(session, ref_data)
+        
+        print("Creating cars...")
+        cars = await seed_cars(session, ref_data)
+        
+        print("Creating maintenance records...")
+        await seed_maintenance_records(session, ref_data, cars)
+        
+        print("Creating complaints...")
+        await seed_complaints(session, ref_data, cars)
+        
+        print("Data has been successfully populated!")
 
 if __name__ == "__main__":
     import asyncio

@@ -83,7 +83,7 @@ export const complaintsColumns = (opts = {}) => [
           onClick: (e) => {
             e.stopPropagation();
             opts.openModel?.(
-              "node_failure",
+              "failure_node",
               r.node_failure_id,
               r.node_failure,
             );
