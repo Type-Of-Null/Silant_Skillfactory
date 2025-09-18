@@ -1,5 +1,5 @@
 from typing import List, Optional
-from datetime import date as _date
+# Removed unused import
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
@@ -91,11 +91,11 @@ class ComplaintCreateRequest(BaseModel):
     date_of_failure: str = Field(..., description="Дата отказа (YYYY-MM-DD)")
     operating_time: str = Field(..., description="Наработка, м/час")
     node_failure_id: int = Field(..., description="ID узла отказа")
-    description_failure: Optional[str] = Field(None, description="Описание отказа")
+    description_failure: Optional[str] = Field("", description="Описание отказа")
     recovery_method_id: int = Field(..., description="ID способа восстановления")
-    used_spare_parts: Optional[str] = Field(None, description="Используемые запасные части")
+    used_spare_parts: Optional[str] = Field("", description="Используемые запасные части")
     date_recovery: Optional[str] = Field(None, description="Дата восстановления (YYYY-MM-DD)")
-    equipment_downtime: Optional[str] = Field(None, description="Время простоя техники")
+    equipment_downtime: Optional[str] = Field("", description="Время простоя техники")
     service_company_id: int = Field(..., description="ID сервисной компании")
 
 
@@ -123,47 +123,79 @@ async def create_complaint(
         raise HTTPException(status_code=422, detail="Указана несуществующая сервисная компания")
 
     try:
-        # Создаем новую рекламацию
+        # Get the car with vehicle_model relationship first
+        car_result = await db.execute(
+            select(CarModel)
+            .options(selectinload(CarModel.vehicle_model))
+            .where(CarModel.id == payload.car_id)
+        )
+        car = car_result.scalar_one_or_none()
+        
+        if not car:
+            raise HTTPException(status_code=404, detail="Car not found")
+        
+        # Create a new complaint instance
         new_complaint = ComplaintModel(
             car_id=payload.car_id,
             date_of_failure=payload.date_of_failure,
             operating_time=payload.operating_time,
             node_failure_id=payload.node_failure_id,
-            description_failure=payload.description_failure,
+            description_failure=payload.description_failure or "",
             recovery_method_id=payload.recovery_method_id,
-            used_spare_parts=payload.used_spare_parts,
-            date_recovery=payload.date_recovery,
-            equipment_downtime=payload.equipment_downtime,
+            used_spare_parts=payload.used_spare_parts or "",
+            date_recovery=payload.date_recovery or None,
+            equipment_downtime=payload.equipment_downtime or "",
             service_company_id=payload.service_company_id,
+            vehicle_model=car.vehicle_model.name if car.vehicle_model else ""
         )
 
+        # Add the new complaint
         db.add(new_complaint)
+        await db.flush()
+        
+        # Get the full complaint with relationships
+        result = await db.execute(
+            select(ComplaintModel)
+            .options(
+                selectinload(ComplaintModel.car)
+                .selectinload(CarModel.vehicle_model),
+                selectinload(ComplaintModel.node_failure),
+                selectinload(ComplaintModel.recovery_method),
+                selectinload(ComplaintModel.service_company)
+            )
+            .where(ComplaintModel.id == new_complaint.id)
+        )
+        complaint = result.scalar_one()
+        
+        # Commit the transaction
         await db.commit()
-        await db.refresh(new_complaint)
-
-        # Возвращаем созданную рекламацию с дополнительными данными
+        
+        # Return the created complaint with additional data
         return {
-            "id": new_complaint.id,
-            "car_id": new_complaint.car_id,
+            "id": complaint.id,
+            "car_id": complaint.car_id,
             "vin": car.vin,
-            "date_of_failure": new_complaint.date_of_failure,
-            "operating_time": new_complaint.operating_time,
-            "node_failure_id": new_complaint.node_failure_id,
+            "date_of_failure": complaint.date_of_failure,
+            "operating_time": complaint.operating_time,
+            "node_failure_id": complaint.node_failure_id,
             "node_failure": node_failure.name,
-            "description_failure": new_complaint.description_failure,
-            "recovery_method_id": new_complaint.recovery_method_id,
+            "description_failure": complaint.description_failure,
+            "recovery_method_id": complaint.recovery_method_id,
             "recovery_method": recovery_method.name,
-            "used_spare_parts": new_complaint.used_spare_parts,
-            "date_recovery": new_complaint.date_recovery,
-            "equipment_downtime": new_complaint.equipment_downtime,
+            "used_spare_parts": complaint.used_spare_parts,
+            "date_recovery": complaint.date_recovery,
+            "equipment_downtime": complaint.equipment_downtime,
             "service_company": service_company.name,
-            "service_company_id": new_complaint.service_company_id,
-            "vehicle_model": car.vehicle_model.name if car.vehicle_model else "",
+            "service_company_id": complaint.service_company_id,
+            "vehicle_model": complaint.vehicle_model,
         }
 
     except Exception as e:
         await db.rollback()
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"Error creating complaint: {error_trace}")  # Debug log
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Ошибка при создании рекламации: {str(e)}",
+            detail=f"Ошибка при создании рекламации: {str(e)}\n{error_trace}",
         )

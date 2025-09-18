@@ -182,7 +182,6 @@ const Complaints = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
-						console.log(data);
             setComplaintsRows(Array.isArray(data) ? data : []);
           } else {
             console.log("No maintenance data or failed response");
@@ -341,10 +340,23 @@ const Complaints = ({ activeTab, filters = {} }) => {
                       onClick={async () => {
                         setSaving(true);
                         try {
+                          const requestData = {
+                            car_id: newRow.car_id,
+                            node_failure_id: newRow.node_failure_id,
+                            recovery_method_id: newRow.recovery_method_id,
+                            date_of_failure: newRow.failure_date,
+                            operating_time: newRow.operating_hours?.toString(),
+                            service_company_id: newRow.service_company_id,
+                            description_failure: "",
+                            used_spare_parts: "",
+                            date_recovery: null,
+                            equipment_downtime: null
+                          };
+                          
                           const created = await saveModel({
                             url: "http://localhost:8000/api/complaints",
                             method: "POST",
-                            data: newRow,
+                            data: requestData,
                             timeout: 12000,
                           });
                           setComplaintsRows((prev) => [created, ...prev]);

@@ -183,7 +183,6 @@ const Maintenance = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
-						console.log(data);
             setMaintRows(Array.isArray(data) ? data : []);
           } else {
             console.log("No maintenance data or failed response");

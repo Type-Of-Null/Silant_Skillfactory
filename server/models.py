@@ -166,7 +166,7 @@ class ComplaintModel(Base):
     id = Column(Integer, primary_key=True)
     car_id = Column(Integer, ForeignKey("car_model.id"), nullable=False)
     date_of_failure = Column(String(255), nullable=False)
-    operating_time = Column(Date, nullable=False)
+    operating_time = Column(String(255), nullable=False)  # Changed from Date to String
     node_failure_id = Column(Integer, ForeignKey("failure_node_model.id"), nullable=False)
     description_failure = Column(String(255))
     recovery_method_id = Column(Integer, ForeignKey("recovery_method_model.id"), nullable=False)
