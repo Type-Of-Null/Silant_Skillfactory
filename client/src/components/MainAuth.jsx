@@ -24,7 +24,7 @@ const MainAuth = () => {
   });
 
 	const [complaintsFilters, setComplaintsFilters] = useState({
-		failure_node: "",
+		node_failure: "",
 		recovery_method: "",
     service_company: "",
 	})
@@ -41,7 +41,7 @@ const MainAuth = () => {
     } else if (activeTab === "maintenance") {
       setMaintFilters({ maintenance_type: "", vin: "", service_company: "" });
     } else if (activeTab === "complaints") {
-      setComplaintsFilters({ failure_node: "", recovery_method: "", service_company: "" });
+      setComplaintsFilters({ node_failure: "", recovery_method: "", service_company: "" });
     }
   };
 
@@ -278,6 +278,61 @@ const MainAuth = () => {
                       </div>
                     </>
                   )}
+									{activeTab === "complaints" && (
+										<>
+											<div>
+                        <label className="mb-1 block text-xs text-gray-600">
+                          Узел отказа
+                        </label>
+                        <input
+                          type="text"
+                          value={complaintsFilters.node}
+                          onChange={(e) =>
+                            setComplaintsFilters((f) => ({
+                              ...f,
+                              node_failure: e.target.value,
+                            }))
+                          }
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
+                          placeholder="например: Ходовая часть"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-xs text-gray-600">
+                          Способ восстановления
+                        </label>
+                        <input
+                          type="text"
+                          value={complaintsFilters.recovery_method}
+                          onChange={(e) =>
+                            setComplaintsFilters((f) => ({
+                              ...f,
+                              recovery_method: e.target.value,
+                            }))
+                          }
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
+                          placeholder="например: Замена"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-xs text-gray-600">
+                          Сервисная компания
+                        </label>
+                        <input
+                          type="text"
+                          value={complaintsFilters.service_company}
+                          onChange={(e) =>
+                            setComplaintsFilters((f) => ({
+                              ...f,
+                              service_company: e.target.value,
+                            }))
+                          }
+                          className="w-full  border border-gray-300 px-2 py-1 text-sm"
+                          placeholder="например: ООО «СИЙМО ТРЕЙД»"
+                        />
+                      </div>
+										</>
+									)}
                 </div>
               </div>
             )}

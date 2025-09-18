@@ -14,6 +14,11 @@ const styleClickableRows =
   "w-full inline-flex justify-center text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]";
 
 export const customStyles = {
+	table: {
+		style: {
+			minHeight: "500px",
+		},
+	},
   headCells: {
     style: {
       backgroundColor: "#163E6C",

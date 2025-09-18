@@ -14,6 +14,12 @@ const styleClickableRows =
   "w-full inline-flex justify-center text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]";
 
 export const customStyles = {
+	table: {
+    style: {
+      minWidth: "1800px",
+			minHeight: "500px",
+    },
+  },
   headCells: {
     style: {
       backgroundColor: "#163E6C",
@@ -46,12 +52,12 @@ export const complaintsColumns = (opts = {}) => [
     name: "VIN",
     selector: (r) => r.vin,
     sortable: true,
-    grow: 1,
+    grow: 2,
     wrap: true,
     center: "true",
   },
   {
-    name: "Дата отказа",
+    name: header("Дата", "отказа"),
     selector: (r) => r.date_of_failure,
     sortable: true,
     grow: 1,
@@ -59,16 +65,16 @@ export const complaintsColumns = (opts = {}) => [
     center: "true",
   },
   {
-    name: "Наработка м/час",
+    name: header("Наработка", "м/час"),
     selector: (r) => r.operating_time,
     sortable: true,
     center: "true",
     id: "operating_time",
-    grow: 1,
+    grow: 1.5,
     wrap: true,
   },
   {
-    name: "Узел отказа",
+    name: header("Узел", "отказа"),
     selector: (r) => r.node_failure_id,
     center: "true",
     sortable: true,
@@ -101,14 +107,14 @@ export const complaintsColumns = (opts = {}) => [
     selector: (r) => r.description_failure,
     sortable: true,
     center: "true",
-    grow: 1,
+    grow: 3,
     wrap: true,
   },
   {
     name: header("Способ", "восстановления"),
     selector: (r) => r.recovery_method_id,
     sortable: true,
-    grow: 1,
+    grow: 1.5,
     wrap: true,
     center: "true",
     cell: (r) =>
