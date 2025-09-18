@@ -286,6 +286,27 @@ export const generalColumns = (opts = {}) => [
     grow: 2.5,
     wrap: true,
     center: "true",
+		cell: (r) =>
+      React.createElement(
+        "button",
+        {
+          type: "button",
+          className: styleClickableRows,
+          onClick: (e) => {
+            e.stopPropagation();
+            opts.openModel?.(
+              "service_company",
+              r.service_company_id,
+              r.service_company,
+            );
+          },
+          disabled: !r.service_company_id,
+          title: r.service_company_id
+            ? "Нажмите для подробного описания"
+            : "ID модели отсутствует",
+        },
+        r.service_company,
+      ),
   },
 ];
 

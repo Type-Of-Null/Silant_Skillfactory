@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from .auth import router as auth_router
 from .cars import router as cars_router
-from .unitModels import router as models_router
+from .models import router as models_router
 from .maintenance import router as maintenance_router
 from .meta import router as meta_router
 

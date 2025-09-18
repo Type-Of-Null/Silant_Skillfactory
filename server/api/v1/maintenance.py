@@ -28,6 +28,7 @@ class MaintenanceResponse(BaseModel):
     order_number: Optional[str]
     order_date: Optional[str]
     service_company: str
+    service_company_id: int
 
 
 @router.get("", response_model=List[MaintenanceResponse])
@@ -61,6 +62,7 @@ async def get_maintenance(db: AsyncSession = Depends(get_db)):
                     "service_company": m.service_company.name
                     if m.service_company
                     else "",
+                    "service_company_id": m.service_company.id if m.service_company else None,
                 }
             )
 

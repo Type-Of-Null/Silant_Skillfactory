@@ -192,6 +192,7 @@ async def create_car(payload: CarCreateRequest, db: AsyncSession = Depends(get_d
     steering_axle_model = await db.get(SteeringAxleModel, car.steering_axle_model_id) if car.steering_axle_model_id else None
 
     return {
+        "id": car.id,
         "vin": car.vin,
         "vehicle_model_id": car.vehicle_model_id,
         "vehicle_model": vehicle_model.name if vehicle_model else "Не указано",

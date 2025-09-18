@@ -81,6 +81,11 @@ const General_info = ({ activeTab, filters = {} }) => {
         getUrl: (id) => `http://localhost:8000/api/models/steering-axle/${id}`,
         putUrl: (id) => `http://localhost:8000/api/models/steering-axle/${id}`,
       },
+			service_company: {
+        title: "Модель сервисной компании",
+        getUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
+      },
     }),
     [],
   );
@@ -98,6 +103,7 @@ const General_info = ({ activeTab, filters = {} }) => {
       idKey: "steering_axle_model_id",
       labelKey: "steering_axle_model",
     },
+		service_company: { idKey: "service_company_model_id", labelKey: "service_company_model" },
   };
 
   // Опции для селектов моделей
@@ -129,7 +135,7 @@ const General_info = ({ activeTab, filters = {} }) => {
             "http://localhost:8000/api/models/service-company",
             10000,
           ),
-        ]);
+					        ]);
         if (!cancelled) {
           setVehicleOpts(Array.isArray(veh) ? veh : []);
           setEngineOpts(Array.isArray(eng) ? eng : []);

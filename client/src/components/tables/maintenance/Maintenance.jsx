@@ -52,6 +52,11 @@ const Maintenance = ({ activeTab, filters = {} }) => {
         getUrl: (id) => `http://localhost:8000/api/models/maintenance-types/${id}`,
         putUrl: (id) => `http://localhost:8000/api/models/maintenance-types/${id}`,
       },
+			service_company: {
+        title: "Вид технического обслуживания",
+        getUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
+        putUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
+      },
     }),
     [],
   );
@@ -59,6 +64,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
   // Ключи для обновления значений моделей при редактировании
   const MODEL_KEYS = {
     maintenance: { idKey: "maintenance_type_id", labelKey: "maintenance_type" },
+		service_company: { idKey: "service_company_id", labelKey: "service_company" },
   };
 
   // Опции для селектов
@@ -177,6 +183,7 @@ const Maintenance = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
+						console.log(data);
             setMaintRows(Array.isArray(data) ? data : []);
           } else {
             console.log("No maintenance data or failed response");

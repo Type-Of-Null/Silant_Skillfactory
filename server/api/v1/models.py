@@ -20,6 +20,7 @@ from models import (
 
 router = APIRouter(prefix="/models", tags=["models"])
 
+
 async def _get_model_by_id(
     db: AsyncSession, model_class: type, model_id: int
 ) -> Optional[Dict[str, Any]]:
@@ -29,6 +30,7 @@ async def _get_model_by_id(
         return None
     return {"id": model.id, "name": model.name, "description": model.description}
 
+
 class ModelResponse(BaseModel):
     id: int = Field(..., description="Идентификатор записи")
     name: str = Field(..., description="Название")
@@ -36,6 +38,7 @@ class ModelResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # Списки моделей для селектов
 @router.get("/vehicle")
@@ -71,6 +74,7 @@ async def list_steering_axle_models(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(SteeringAxleModel))
     items = result.scalars().all()
     return [{"id": m.id, "name": m.name} for m in items]
+
 
 # Клиенты и сервисные компании
 @router.get("/clients")
@@ -145,6 +149,7 @@ async def delete_vehicle_model(model_id: int, db: AsyncSession = Depends(get_db)
     await db.commit()
     return {"ok": True}
 
+
 # Техническое обслуживание
 @router.get("/maintenance-types/{model_id}", response_model=ModelResponse)
 async def get_maintenance_type(model_id: int, db: AsyncSession = Depends(get_db)):
@@ -158,10 +163,41 @@ async def get_maintenance_type(model_id: int, db: AsyncSession = Depends(get_db)
 async def update_maintenance_type(
     model_id: int, payload: ModelUpdateRequest, db: AsyncSession = Depends(get_db)
 ):
-    result = await db.execute(select(TechMaintenanceModel).where(TechMaintenanceModel.id == model_id))
+    result = await db.execute(
+        select(TechMaintenanceModel).where(TechMaintenanceModel.id == model_id)
+    )
     model = result.scalar_one_or_none()
     if not model:
         raise HTTPException(status_code=404, detail="Maintenance type not found")
+
+    if payload.name is not None:
+        model.name = payload.name
+    if payload.description is not None:
+        model.description = payload.description
+
+    await db.commit()
+    await db.refresh(model)
+    return {"id": model.id, "name": model.name, "description": model.description}
+
+
+@router.get("/service-company/{model_id}", response_model=ModelResponse)
+async def get_service_company(model_id: int, db: AsyncSession = Depends(get_db)):
+    model = await _get_model_by_id(db, ServiceCompanyModel, model_id)
+    if not model:
+        raise HTTPException(status_code=404, detail="Service company not found")
+    return model
+
+
+@router.put("/service-company/{model_id}", response_model=ModelResponse)
+async def update_service_company(
+    model_id: int, payload: ModelUpdateRequest, db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(ServiceCompanyModel).where(ServiceCompanyModel.id == model_id)
+    )
+    model = result.scalar_one_or_none()
+    if not model:
+        raise HTTPException(status_code=404, detail="Service company not found")
 
     if payload.name is not None:
         model.name = payload.name
