@@ -7,7 +7,7 @@ const ModalBase = ({ open, title, onClose, footer, children }) => {
           <h3 className="text-lg font-semibold text-[#163E6C]">{title}</h3>
           <button
             type="button"
-            className=" px-2 py-1 text-sm text-gray-600 hover:bg-gray-100"
+            className=" px-2 py-1 text-sm text-[#3d3d3d] hover:bg-gray-100"
             onClick={onClose}
           >
             ✕

@@ -146,4 +146,5 @@ async def create_maintenance(
         "order_number": maintenance.order_number or "",
         "order_date": order_dt.isoformat() if order_dt else "",
         "service_company": service_company.name,
+        "service_company_id": service_company.id,
     }

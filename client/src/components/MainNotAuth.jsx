@@ -159,7 +159,7 @@ const Main = () => {
               <h3 className="text-xl font-bold text-[#163E6C]">
                 Карточка техники
               </h3>
-              <p className="text-gray-600">Детальная информация о технике</p>
+              <p className="text-[#3d3d3d]">Детальная информация о технике</p>
             </div>
 
             <div className="overflow-x-auto">
@@ -170,7 +170,7 @@ const Main = () => {
                       {headerGroup.headers.map((header) => (
                         <th
                           key={header.id}
-                          className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                          className="px-6 py-3 text-left text-xs font-medium tracking-wider text-[#3d3d3d] uppercase"
                         >
                           {header.isPlaceholder
                             ? null

@@ -64,30 +64,30 @@ const MainAuth = () => {
           <nav className="-mb-px flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-8">
             <button
               onClick={() => setActiveTab("general")}
-              className={`self-center border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
+              className={`self-center border-b-2 px-1 text-sm font-medium whitespace-nowrap ${
                 activeTab === "general"
                   ? "border-[#D20A11] text-[#D20A11]"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  : "border-transparent text-[#3d3d3d] hover:border-gray-300 hover:text-[#3d3d3d]"
               }`}
             >
               Общая информация
             </button>
             <button
               onClick={() => setActiveTab("maintenance")}
-              className={`self-center border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
+              className={`self-center border-b-2 px-1 text-sm font-medium whitespace-nowrap ${
                 activeTab === "maintenance"
                   ? "border-[#D20A11] text-[#D20A11]"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  : "border-transparent text-[#3d3d3d] hover:border-gray-300 hover:text-[#3d3d3d]"
               }`}
             >
               Техническое обслуживание
             </button>
             <button
               onClick={() => setActiveTab("complaints")}
-              className={`self-center border-b-2 px-1 py-3 text-sm font-medium whitespace-nowrap ${
+              className={`self-center border-b-2 px-1 text-sm font-medium whitespace-nowrap ${
                 activeTab === "complaints"
                   ? "border-[#D20A11] text-[#D20A11]"
-                  : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  : "border-transparent text-[#3d3d3d] hover:border-gray-300 hover:text-[#3d3d3d]"
               }`}
             >
               Рекламации
@@ -120,7 +120,7 @@ const MainAuth = () => {
                     <button
                       type="button"
                       onClick={clearActiveFilters}
-                      className=" bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-200"
+                      className=" bg-gray-100 px-2 py-1 text-xs font-medium text-[#3d3d3d] hover:bg-gray-200"
                     >
                       Очистить
                     </button>
@@ -137,7 +137,7 @@ const MainAuth = () => {
                   {activeTab === "general" && (
                     <>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Модель техники
                         </label>
                         <input
@@ -154,7 +154,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Модель двигателя
                         </label>
                         <input
@@ -171,7 +171,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Модель трансмиссии
                         </label>
                         <input
@@ -188,7 +188,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Модель управляемого моста
                         </label>
                         <input
@@ -205,7 +205,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Модель ведущего моста
                         </label>
                         <input
@@ -226,7 +226,7 @@ const MainAuth = () => {
                   {activeTab === "maintenance" && (
                     <>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Вид ТО
                         </label>
                         <input
@@ -243,7 +243,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Зав. номер машины
                         </label>
                         <input
@@ -260,7 +260,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Сервисная компания
                         </label>
                         <input
@@ -281,7 +281,7 @@ const MainAuth = () => {
 									{activeTab === "complaints" && (
 										<>
 											<div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Узел отказа
                         </label>
                         <input
@@ -298,7 +298,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Способ восстановления
                         </label>
                         <input
@@ -315,7 +315,7 @@ const MainAuth = () => {
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-gray-600">
+                        <label className="mb-1 block text-xs text-[#3d3d3d]">
                           Сервисная компания
                         </label>
                         <input

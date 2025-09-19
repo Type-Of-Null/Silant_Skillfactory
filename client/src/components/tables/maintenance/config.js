@@ -102,7 +102,7 @@ export const maintColumns = (opts = {}) => [
     wrap: true,
   },
   {
-    name: header("Дата", "заказа-наряда"),
+    name: header("Дата", "заказ-наряда"),
     selector: (r) => r.order_date,
     sortable: true,
     center: "true",

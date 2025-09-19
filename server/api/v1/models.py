@@ -313,6 +313,20 @@ async def get_recovery_method_model(model_id: int, db: AsyncSession = Depends(ge
         raise HTTPException(status_code=404, detail="Recovery method model not found")
     return model
 
+@router.put("/recovery-method/{model_id}", response_model=ModelResponse)
+async def update_recovery_method_model(model_id: int, payload: ModelUpdateRequest, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(RecoveryMethodModel).where(RecoveryMethodModel.id == model_id))
+    model = result.scalar_one_or_none()
+    if not model:
+        raise HTTPException(status_code=404, detail="Recovery method model not found")
+    if payload.name is not None:
+        model.name = payload.name
+    if payload.description is not None:
+        model.description = payload.description
+    await db.commit()
+    await db.refresh(model)
+    return {"id": model.id, "name": model.name, "description": model.description}
+
 
 # Модели узла отказа
 @router.get("/failure-node")
@@ -328,6 +342,20 @@ async def get_failure_node_model(model_id: int, db: AsyncSession = Depends(get_d
     if not model:
         raise HTTPException(status_code=404, detail="Failure node model not found")
     return model
+
+@router.put("/failure-node/{model_id}", response_model=ModelResponse)
+async def update_failure_node_model(model_id: int, payload: ModelUpdateRequest, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(FailureNodeModel).where(FailureNodeModel.id == model_id))
+    model = result.scalar_one_or_none()
+    if not model:
+        raise HTTPException(status_code=404, detail="Failure node model not found")
+    if payload.name is not None:
+        model.name = payload.name
+    if payload.description is not None:
+        model.description = payload.description
+    await db.commit()
+    await db.refresh(model)
+    return {"id": model.id, "name": model.name, "description": model.description}
 
 
 # Клиенты 

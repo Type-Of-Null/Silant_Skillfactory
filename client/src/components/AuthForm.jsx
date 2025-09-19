@@ -48,7 +48,7 @@ const AuthForm = ({ onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-[#3d3d3d] hover:text-[#3d3d3d]"
             disabled={isLoading}
           >
             ✕
@@ -63,7 +63,7 @@ const AuthForm = ({ onClose }) => {
           <div>
             <label
               htmlFor="username"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-[#3d3d3d]"
             >
               Логин
             </label>
@@ -80,7 +80,7 @@ const AuthForm = ({ onClose }) => {
           <div>
             <label
               htmlFor="password"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-[#3d3d3d]"
             >
               Пароль
             </label>
@@ -98,7 +98,7 @@ const AuthForm = ({ onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 text-[#3d3d3d] hover:bg-gray-50"
               disabled={isLoading}
             >
               Отмена

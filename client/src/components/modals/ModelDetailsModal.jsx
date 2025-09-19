@@ -17,7 +17,7 @@ const ModelDetailsModal = ({
 }) => {
   const footer = (
     <>
-      <div className="text-xs text-gray-500">ID: {data?.id ?? "—"}</div>
+      <div className="text-xs text-[#3d3d3d]">ID: {data?.id ?? "—"}</div>
       <div className="flex items-center gap-2">
         {!editMode && (
           <button
@@ -62,7 +62,7 @@ const ModelDetailsModal = ({
   return (
     <ModalBase open={open} title={title} onClose={onClose} footer={footer}>
       {loading ? (
-        <div className="py-6 text-center text-gray-600">Загрузка...</div>
+        <div className="py-6 text-center text-[#3d3d3d]">Загрузка...</div>
       ) : (
         <>
           {error && (
@@ -74,11 +74,11 @@ const ModelDetailsModal = ({
           {!editMode ? (
             <div className="space-y-2">
               <div>
-                <div className="text-xs text-gray-500">Название</div>
+                <div className="text-xs text-[#3d3d3d]">Название</div>
                 <div className="text-base font-medium">{data?.name}</div>
               </div>
               <div>
-                <div className="text-xs text-gray-500">Описание</div>
+                <div className="text-xs text-[#3d3d3d]">Описание</div>
                 <div className="text-sm whitespace-pre-wrap">
                   {data?.description || "—"}
                 </div>
@@ -87,7 +87,7 @@ const ModelDetailsModal = ({
           ) : (
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-xs text-gray-600">
+                <label className="mb-1 block text-xs text-[#3d3d3d]">
                   Название
                 </label>
                 <input
@@ -98,7 +98,7 @@ const ModelDetailsModal = ({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-gray-600">
+                <label className="mb-1 block text-xs text-[#3d3d3d]">
                   Описание
                 </label>
                 <textarea

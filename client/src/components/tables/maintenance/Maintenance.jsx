@@ -228,96 +228,108 @@ const Maintenance = ({ activeTab, filters = {} }) => {
                   </button>
                 ) : (
                   <>
-                    <select
-                      className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.car_id ? "border-red-500" : ""}`}
-                      value={newRow.car_id ?? ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          car_id: e.target.value
-                            ? Number(e.target.value)
-                            : null,
-                        }))
-                      }
-                    >
-                      <option value="">Машина (обязательно)</option>
-                      {carOpts.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.name}
-                        </option>
-                      ))}
-                    </select>
-                    <select
-                      className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.maintenance_type_id ? "border-red-500" : ""}`}
-                      value={newRow.maintenance_type_id ?? ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          maintenance_type_id: e.target.value
-                            ? Number(e.target.value)
-                            : null,
-                        }))
-                      }
-                    >
-                      <option value="">Тип ТО (обязательно)</option>
-                      {maintenanceTypeOpts.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.name}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="date"
-                      className={` border px-2 py-1 text-sm ${!newRow.maintenance_date ? "border-red-500" : ""}`}
-                      value={newRow.maintenance_date || ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          maintenance_date: e.target.value,
-                        }))
-                      }
-                    />
-                    <input
-                      className=" border px-2 py-1 text-sm"
-                      placeholder="№ заказ-наряда"
-                      value={newRow.order_number}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          order_number: e.target.value,
-                        }))
-                      }
-                    />
-                    <input
-                      type="date"
-                      className={` border px-2 py-1 text-sm ${!newRow.order_date ? "border-red-500" : ""}`}
-                      value={newRow.order_date || ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          order_date: e.target.value,
-                        }))
-                      }
-                    />
-                    <select
-                      className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
-                      value={newRow.service_company_id ?? ""}
-                      onChange={(e) =>
-                        setNewRow((r) => ({
-                          ...r,
-                          service_company_id: e.target.value
-                            ? Number(e.target.value)
-                            : null,
-                        }))
-                      }
-                    >
-                      <option value="">Сервисная компания (обязательно)</option>
-                      {serviceCompanyOpts.map((o) => (
-                        <option key={o.id} value={o.id}>
-                          {o.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex flex-col">
+                      <label className="text-xs text-[#3d3d3d] mb-1 self-start">Машина (обязательно)</label>
+                      <select
+                        className={`h-[30px] border px-2 py-1 text-sm ${!newRow.car_id ? "border-red-500" : ""}`}
+                        value={newRow.car_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            car_id: e.target.value ? Number(e.target.value) : null,
+                          }))
+                        }
+                      >
+                        <option value="">Выберите машину</option>
+                        {carOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-xs text-[#3d3d3d] mb-1 self-start">Тип ТО (обязательно)</label>
+                      <select
+                        className={`h-[30px] border px-2 py-1 text-sm ${!newRow.maintenance_type_id ? "border-red-500" : ""}`}
+                        value={newRow.maintenance_type_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            maintenance_type_id: e.target.value ? Number(e.target.value) : null,
+                          }))
+                        }
+                      >
+                        <option value="">Выберите тип ТО</option>
+                        {maintenanceTypeOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-xs text-[#3d3d3d] mb-1 self-start">Дата ТО (обязательно)</label>
+                      <input
+                        type="date"
+                        className={`border px-2 py-1 text-sm ${!newRow.maintenance_date ? "border-red-500" : ""}`}
+                        value={newRow.maintenance_date || ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            maintenance_date: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-xs text-[#3d3d3d] mb-1 self-start">№ заказ-наряда</label>
+                      <input
+                        className="border px-2 py-1 text-sm"
+                        placeholder="Введите номер"
+                        value={newRow.order_number}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            order_number: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-xs text-[#3d3d3d] mb-1 self-start">Дата заказ-наряда</label>
+                      <input
+                        type="date"
+                        className={`border px-2 py-1 text-sm ${!newRow.order_date ? "border-red-500" : ""}`}
+                        value={newRow.order_date || ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            order_date: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="flex flex-col">
+                      <label className="text-xs text-[#3d3d3d] mb-1 self-start">Сервисная компания (обязательно)</label>
+                      <select
+                        className={`h-[30px] border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
+                        value={newRow.service_company_id ?? ""}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            service_company_id: e.target.value ? Number(e.target.value) : null,
+                          }))
+                        }
+                      >
+                        <option value="">Выберите компанию</option>
+                        {serviceCompanyOpts.map((o) => (
+                          <option key={o.id} value={o.id}>
+                            {o.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <button
                       type="button"
                       disabled={

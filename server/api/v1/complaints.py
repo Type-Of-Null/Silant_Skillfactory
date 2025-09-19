@@ -1,11 +1,11 @@
+from datetime import datetime
 from typing import List, Optional
-# Removed unused import
-
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
+
 
 from database import get_db
 from models import (
@@ -41,6 +41,70 @@ class ComplaintResponse(BaseModel):
         from_attributes = True
 
 
+def calculate_downtime(date_failure: str, date_recovery: str) -> str:
+    """Вычисляем разницу между датами"""
+    if not date_failure or not date_recovery:
+        return ""
+    
+    try:
+        failure_date = datetime.strptime(date_failure, "%Y-%m-%d").date()
+        recovery_date = datetime.strptime(date_recovery, "%Y-%m-%d").date()
+        
+        if recovery_date < failure_date:
+            return ""
+            
+        downtime_days = (recovery_date - failure_date).days
+        return f"{downtime_days} дней"
+    except (ValueError, TypeError):
+        return ""
+
+
+class ComplaintCreateRequest(BaseModel):
+    car_id: int = Field(..., description="ID машины")
+    date_of_failure: str = Field(..., description="Дата отказа (YYYY-MM-DD)")
+    operating_time: str = Field(..., description="Наработка, м/час")
+    node_failure_id: int = Field(..., description="ID узла отказа")
+    description_failure: Optional[str] = Field("", description="Описание отказа")
+    recovery_method_id: int = Field(..., description="ID способа восстановления")
+    used_spare_parts: Optional[str] = Field(
+        "", description="Используемые запасные части"
+    )
+    date_recovery: Optional[str] = Field(
+        None, description="Дата восстановления (YYYY-MM-DD)"
+    )
+    equipment_downtime: Optional[str] = Field("", description="Время простоя техники")
+    service_company_id: int = Field(..., description="ID сервисной компании")
+
+    @field_validator('date_recovery')
+    @classmethod
+    def validate_dates(cls, v, info):
+        """Валидация: дата восстановления не может быть раньше даты отказа"""
+        if v:
+            data = info.data
+            if 'date_of_failure' in data and data['date_of_failure']:
+                try:
+                    failure_date = datetime.strptime(data['date_of_failure'], "%Y-%m-%d").date()
+                    recovery_date = datetime.strptime(v, "%Y-%m-%d").date()
+                    
+                    if recovery_date < failure_date:
+                        raise ValueError("Дата восстановления не может быть раньше даты отказа")
+                except (ValueError, TypeError):
+                    pass
+        return v
+
+    @field_validator('equipment_downtime')
+    @classmethod
+    def calculate_equipment_downtime(cls, v, info):
+        """Автоматически вычисляет время простоя"""
+        data = info.data
+        date_failure = data.get('date_of_failure')
+        date_recovery = data.get('date_recovery')
+        
+        if date_failure and date_recovery:
+            return calculate_downtime(date_failure, date_recovery)
+        return v or ""
+
+
 @router.get("", response_model=List[ComplaintResponse])
 async def get_complaints(db: AsyncSession = Depends(get_db)):
     try:
@@ -56,6 +120,12 @@ async def get_complaints(db: AsyncSession = Depends(get_db)):
 
         response_data = []
         for complaint in complaints:
+            # Пересчитываем downtime при получении данных
+            downtime = calculate_downtime(
+                complaint.date_of_failure, 
+                complaint.date_recovery
+            ) if complaint.date_recovery else complaint.equipment_downtime or ""
+
             response_data.append(
                 {
                     "id": complaint.id,
@@ -76,7 +146,7 @@ async def get_complaints(db: AsyncSession = Depends(get_db)):
                     else "",
                     "used_spare_parts": complaint.used_spare_parts,
                     "date_recovery": complaint.date_recovery,
-                    "equipment_downtime": complaint.equipment_downtime,
+                    "equipment_downtime": downtime, 
                     "service_company_id": complaint.service_company_id,
                     "service_company": complaint.service_company.name
                     if complaint.service_company
@@ -93,23 +163,6 @@ async def get_complaints(db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Ошибка при получении списка рекламаций: {str(e)}",
         )
-
-
-class ComplaintCreateRequest(BaseModel):
-    car_id: int = Field(..., description="ID машины")
-    date_of_failure: str = Field(..., description="Дата отказа (YYYY-MM-DD)")
-    operating_time: str = Field(..., description="Наработка, м/час")
-    node_failure_id: int = Field(..., description="ID узла отказа")
-    description_failure: Optional[str] = Field("", description="Описание отказа")
-    recovery_method_id: int = Field(..., description="ID способа восстановления")
-    used_spare_parts: Optional[str] = Field(
-        "", description="Используемые запасные части"
-    )
-    date_recovery: Optional[str] = Field(
-        None, description="Дата восстановления (YYYY-MM-DD)"
-    )
-    equipment_downtime: Optional[str] = Field("", description="Время простоя техники")
-    service_company_id: int = Field(..., description="ID сервисной компании")
 
 
 @router.post("", response_model=ComplaintResponse, status_code=status.HTTP_201_CREATED)
@@ -139,6 +192,23 @@ async def create_complaint(
             status_code=422, detail="Указана несуществующая сервисная компания"
         )
 
+    # Дополнительная валидация дат
+    if payload.date_recovery:
+        try:
+            failure_date = datetime.strptime(payload.date_of_failure, "%Y-%m-%d").date()
+            recovery_date = datetime.strptime(payload.date_recovery, "%Y-%m-%d").date()
+            
+            if recovery_date < failure_date:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Дата восстановления не может быть раньше даты отказа"
+                )
+        except ValueError:
+            raise HTTPException(
+                status_code=422,
+                detail="Неверный формат даты. Используйте YYYY-MM-DD"
+            )
+
     try:
         car_result = await db.execute(
             select(CarModel)
@@ -150,6 +220,12 @@ async def create_complaint(
         if not car:
             raise HTTPException(status_code=404, detail="Car not found")
 
+        # Вычисляем дни простоя техники
+        equipment_downtime = calculate_downtime(
+            payload.date_of_failure, 
+            payload.date_recovery
+        ) if payload.date_recovery else ""
+
         new_complaint = ComplaintModel(
             car_id=payload.car_id,
             date_of_failure=payload.date_of_failure,
@@ -159,7 +235,7 @@ async def create_complaint(
             recovery_method_id=payload.recovery_method_id,
             used_spare_parts=payload.used_spare_parts or "",
             date_recovery=payload.date_recovery or None,
-            equipment_downtime=payload.equipment_downtime or "",
+            equipment_downtime=equipment_downtime,  # Сохраняем вычисленное значение
             service_company_id=payload.service_company_id,
             vehicle_model=car.vehicle_model.name if car.vehicle_model else "",
         )
@@ -194,7 +270,7 @@ async def create_complaint(
             "recovery_method": recovery_method.name,
             "used_spare_parts": complaint.used_spare_parts,
             "date_recovery": complaint.date_recovery,
-            "equipment_downtime": complaint.equipment_downtime,
+            "equipment_downtime": equipment_downtime,  # Возвращаем вычисленное значение
             "service_company": service_company.name,
             "service_company_id": complaint.service_company_id,
             "vehicle_model": complaint.vehicle_model,

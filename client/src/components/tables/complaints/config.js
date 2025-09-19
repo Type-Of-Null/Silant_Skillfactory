@@ -59,6 +59,7 @@ export const complaintsColumns = (opts = {}) => [
   {
     name: header("Дата", "отказа"),
     selector: (r) => r.date_of_failure,
+    id: "date_of_failure",
     sortable: true,
     grow: 1,
     wrap: true,
@@ -144,7 +145,7 @@ export const complaintsColumns = (opts = {}) => [
 		selector: (r) => r.used_spare_parts,
 		sortable: true,
 		center: "true",
-		grow: 1,
+		grow: 1.5,
 		wrap: true,
 	},
 	{
@@ -152,7 +153,7 @@ export const complaintsColumns = (opts = {}) => [
 		selector: (r) => r.date_recovery,
 		sortable: true,
 		center: "true",
-		grow: 1,
+		grow: 1.5,
 		wrap: true,
 	},
 	{

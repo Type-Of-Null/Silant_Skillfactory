@@ -81,10 +81,12 @@ const General_info = ({ activeTab, filters = {} }) => {
         getUrl: (id) => `http://localhost:8000/api/models/steering-axle/${id}`,
         putUrl: (id) => `http://localhost:8000/api/models/steering-axle/${id}`,
       },
-			service_company: {
+      service_company: {
         title: "Модель сервисной компании",
-        getUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
-        putUrl: (id) => `http://localhost:8000/api/models/service-company/${id}`,
+        getUrl: (id) =>
+          `http://localhost:8000/api/models/service-company/${id}`,
+        putUrl: (id) =>
+          `http://localhost:8000/api/models/service-company/${id}`,
       },
     }),
     [],
@@ -103,7 +105,10 @@ const General_info = ({ activeTab, filters = {} }) => {
       idKey: "steering_axle_model_id",
       labelKey: "steering_axle_model",
     },
-		service_company: { idKey: "service_company_id", labelKey: "service_company" },
+    service_company: {
+      idKey: "service_company_id",
+      labelKey: "service_company",
+    },
   };
 
   // Опции для селектов моделей
@@ -135,7 +140,7 @@ const General_info = ({ activeTab, filters = {} }) => {
             "http://localhost:8000/api/models/service-company",
             10000,
           ),
-					        ]);
+        ]);
         if (!cancelled) {
           setVehicleOpts(Array.isArray(veh) ? veh : []);
           setEngineOpts(Array.isArray(eng) ? eng : []);
@@ -219,7 +224,7 @@ const General_info = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
-						console.log('Data loaded', data);
+            console.log("Data loaded", data);
             setRows(Array.isArray(data) ? data : []);
           } else {
             setRows([]);
@@ -258,262 +263,347 @@ const General_info = ({ activeTab, filters = {} }) => {
                   {!isAdding ? (
                     <button
                       type="button"
-                      className=" bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
+                      className="bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white shadow-md hover:bg-[#1c4f8a]"
                       onClick={() => setIsAdding(true)}
                     >
                       + Добавить запись
                     </button>
                   ) : (
                     <>
-                      <input
-                        className={` border px-2 py-1 text-sm ${newRow.vin && newRow.vin.length !== 17 ? "border-red-500" : ""}`}
-                        placeholder="VIN (17 символов)"
-                        value={newRow.vin}
-                        maxLength={17}
-                        minLength={17}
-                        pattern="^[A-HJ-NPR-Z0-9]{17}$"
-                        title="VIN: 17 символов, без I, O, Q"
-                        onChange={(e) => {
-                          const v = e.target.value
-                            .toUpperCase()
-                            .replace(/\s+/g, "");
-                          setNewRow((r) => ({ ...r, vin: v }));
-                        }}
-                      />
-                      <select
-                        className="h-[30px]  border px-2 py-1 text-sm"
-                        value={newRow.vehicle_model_id ?? ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            vehicle_model_id: e.target.value
-                              ? Number(e.target.value)
-                              : null,
-                          }))
-                        }
-                      >
-                        <option value="">Модель техники</option>
-                        {vehicleOpts.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            {o.name}
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          VIN (17 символов, без I, O, Q)
+                        </label>
+                        <input
+                          className={`border px-2 py-1 text-sm ${newRow.vin && newRow.vin.length !== 17 ? "border-red-500" : ""}`}
+                          placeholder="Введите VIN"
+                          value={newRow.vin}
+                          maxLength={17}
+                          minLength={17}
+                          pattern="^[A-HJ-NPR-Z0-9]{17}$"
+                          title="VIN: 17 символов, без I, O, Q"
+                          onChange={(e) => {
+                            const v = e.target.value
+                              .toUpperCase()
+                              .replace(/\s+/g, "");
+                            setNewRow((r) => ({ ...r, vin: v }));
+                          }}
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Модель техники
+                        </label>
+                        <select
+                          className="h-[30px] border px-2 py-1 text-sm"
+                          value={newRow.vehicle_model_id ?? ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              vehicle_model_id: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            }))
+                          }
+                        >
+                          <option value="">Выберите модель</option>
+                          {vehicleOpts.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Модель двигателя
+                        </label>
+                        <select
+                          className="h-[30px] border px-2 py-1 text-sm"
+                          value={newRow.engine_model_id ?? ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              engine_model_id: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            }))
+                          }
+                        >
+                          <option value="">Выберите модель</option>
+                          {engineOpts.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Зав. № двигателя
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Введите номер"
+                          value={newRow.engine_number}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              engine_number: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Модель трансмиссии
+                        </label>
+                        <select
+                          className="h-[30px] border px-2 py-1 text-sm"
+                          value={newRow.transmission_model_id ?? ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              transmission_model_id: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            }))
+                          }
+                        >
+                          <option value="">Выберите модель</option>
+                          {transmissionOpts.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Зав. № трансмиссии
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Введите номер"
+                          value={newRow.transmission_number}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              transmission_number: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Ведущий мост
+                        </label>
+                        <select
+                          className="h-[30px] border px-2 py-1 text-sm"
+                          value={newRow.drive_axle_model_id ?? ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              drive_axle_model_id: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            }))
+                          }
+                        >
+                          <option value="">Выберите модель</option>
+                          {driveAxleOpts.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Зав. № ведущего моста
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Введите номер"
+                          value={newRow.drive_axle_number}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              drive_axle_number: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Модель управляемого моста
+                        </label>
+                        <select
+                          className="h-[30px] border px-2 py-1 text-sm"
+                          value={newRow.steering_axle_model_id ?? ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              steering_axle_model_id: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            }))
+                          }
+                        >
+                          <option value="">Управляемый мост</option>
+                          {steeringAxleOpts.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Зав. № управляемого моста
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Зав. № управляемого моста"
+                          value={newRow.steering_axle_number}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              steering_axle_number: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Договор поставки
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Договор поставки"
+                          value={newRow.delivery_agreement}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              delivery_agreement: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Дата отгрузки
+                        </label>
+                        <input
+                          type="date"
+                          className="border px-2 py-1 text-sm"
+                          value={newRow.shipment_date || ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              shipment_date: e.target.value,
+                            }))
+                          }
+                        />{" "}
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Грузополучатель
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Грузополучатель"
+                          value={newRow.recipient}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              recipient: e.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Адрес поставки
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Адрес поставки"
+                          value={newRow.delivery_address}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              delivery_address: e.target.value,
+                            }))
+                          }
+                        />{" "}
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Комплектация
+                        </label>
+                        <input
+                          className="border px-2 py-1 text-sm"
+                          placeholder="Комплектация"
+                          value={newRow.equipment}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              equipment: e.target.value,
+                            }))
+                          }
+                        />{" "}
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Клиент
+                        </label>
+                        <select
+                          className={`h-[30px] border px-2 py-1 text-sm ${!newRow.client_id ? "border-red-500" : ""}`}
+                          value={newRow.client_id ?? ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              client_id: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            }))
+                          }
+                        >
+                          <option value="">Клиент (обязательно)</option>
+                          {clientOpts.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.name}
+                            </option>
+                          ))}
+                        </select>{" "}
+                      </div>
+                      <div className="flex flex-col">
+                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                          Сервисная компания
+                        </label>
+                        <select
+                          className={`h-[30px] border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
+                          value={newRow.service_company_id ?? ""}
+                          onChange={(e) =>
+                            setNewRow((r) => ({
+                              ...r,
+                              service_company_id: e.target.value
+                                ? Number(e.target.value)
+                                : null,
+                            }))
+                          }
+                        >
+                          <option value="">
+                            Сервисная компания (обязательно)
                           </option>
-                        ))}
-                      </select>
-                      <select
-                        className="h-[30px]  border px-2 py-1 text-sm"
-                        value={newRow.engine_model_id ?? ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            engine_model_id: e.target.value
-                              ? Number(e.target.value)
-                              : null,
-                          }))
-                        }
-                      >
-                        <option value="">Модель двигателя</option>
-                        {engineOpts.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            {o.name}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Зав. № двигателя"
-                        value={newRow.engine_number}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            engine_number: e.target.value,
-                          }))
-                        }
-                      />
-                      <select
-                        className="h-[30px]  border px-2 py-1 text-sm"
-                        value={newRow.transmission_model_id ?? ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            transmission_model_id: e.target.value
-                              ? Number(e.target.value)
-                              : null,
-                          }))
-                        }
-                      >
-                        <option value="">Модель трансмиссии</option>
-                        {transmissionOpts.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            {o.name}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Зав. № трансмиссии"
-                        value={newRow.transmission_number}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            transmission_number: e.target.value,
-                          }))
-                        }
-                      />
-                      <select
-                        className="h-[30px]  border px-2 py-1 text-sm"
-                        value={newRow.drive_axle_model_id ?? ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            drive_axle_model_id: e.target.value
-                              ? Number(e.target.value)
-                              : null,
-                          }))
-                        }
-                      >
-                        <option value="">Ведущий мост</option>
-                        {driveAxleOpts.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            {o.name}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Зав. № ведущего моста"
-                        value={newRow.drive_axle_number}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            drive_axle_number: e.target.value,
-                          }))
-                        }
-                      />
-                      <select
-                        className="h-[30px]  border px-2 py-1 text-sm"
-                        value={newRow.steering_axle_model_id ?? ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            steering_axle_model_id: e.target.value
-                              ? Number(e.target.value)
-                              : null,
-                          }))
-                        }
-                      >
-                        <option value="">Управляемый мост</option>
-                        {steeringAxleOpts.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            {o.name}
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Зав. № управляемого моста"
-                        value={newRow.steering_axle_number}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            steering_axle_number: e.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Договор поставки"
-                        value={newRow.delivery_agreement}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            delivery_agreement: e.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        type="date"
-                        className=" border px-2 py-1 text-sm"
-                        value={newRow.shipment_date || ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            shipment_date: e.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Грузополучатель"
-                        value={newRow.recipient}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            recipient: e.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Адрес поставки"
-                        value={newRow.delivery_address}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            delivery_address: e.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        className=" border px-2 py-1 text-sm"
-                        placeholder="Комплектация"
-                        value={newRow.equipment}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            equipment: e.target.value,
-                          }))
-                        }
-                      />
-                      <select
-                        className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.client_id ? "border-red-500" : ""}`}
-                        value={newRow.client_id ?? ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            client_id: e.target.value
-                              ? Number(e.target.value)
-                              : null,
-                          }))
-                        }
-                      >
-                        <option value="">Клиент (обязательно)</option>
-                        {clientOpts.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            {o.name}
-                          </option>
-                        ))}
-                      </select>
-                      <select
-                        className={`h-[30px]  border px-2 py-1 text-sm ${!newRow.service_company_id ? "border-red-500" : ""}`}
-                        value={newRow.service_company_id ?? ""}
-                        onChange={(e) =>
-                          setNewRow((r) => ({
-                            ...r,
-                            service_company_id: e.target.value
-                              ? Number(e.target.value)
-                              : null,
-                          }))
-                        }
-                      >
-                        <option value="">
-                          Сервисная компания (обязательно)
-                        </option>
-                        {serviceCompanyOpts.map((o) => (
-                          <option key={o.id} value={o.id}>
-                            {o.name}
-                          </option>
-                        ))}
-                      </select>
+                          {serviceCompanyOpts.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.name}
+                            </option>
+                          ))}
+                        </select>{" "}
+                      </div>
 
                       <button
                         type="button"
@@ -533,7 +623,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                           !newRow.client_id ||
                           !newRow.service_company_id
                         }
-                        className=" bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
+                        className="bg-green-600 px-3 py-1 text-sm font-semibold text-white disabled:opacity-50"
                         onClick={async () => {
                           if (!newRow.vin) return;
                           setSaving(true);
@@ -558,7 +648,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                       </button>
                       <button
                         type="button"
-                        className=" bg-gray-200 px-3 py-1 text-sm"
+                        className="bg-gray-200 px-3 py-1 text-sm"
                         onClick={() => {
                           setIsAdding(false);
                           setNewRow(emptyNewRow);

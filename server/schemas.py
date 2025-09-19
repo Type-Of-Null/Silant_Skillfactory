@@ -87,7 +87,7 @@ class STechMaintenance(BaseModel):
     maintenance_type: int = Field(..., description="ID вида ТО")
     maintenance_date: date = Field(..., description="Дата проведения ТО")
     operating_time: int = Field(..., description="Наработка мото/часов")
-    order: str = Field(..., description="Номер заказа-наряда")
-    order_date: date = Field(..., description="Дата заказа-наряда")
+    order: str = Field(..., description="Номер заказ-наряда")
+    order_date: date = Field(..., description="Дата заказ-наряда")
 
 
