@@ -224,7 +224,6 @@ const General_info = ({ activeTab, filters = {} }) => {
         if (!cancelled) {
           if (res.success) {
             const data = res.data;
-            console.log("Data loaded", data);
             setRows(Array.isArray(data) ? data : []);
           } else {
             setRows([]);
