@@ -1,4 +1,17 @@
 import React from "react";
+import { imgHeader } from "../../../utils/imgHeader";
+import number_logo from "../../../assets/img/header/number.png";
+import date_failure_logo from "../../../assets/img/header/date_failure.png";
+import operating_time_logo from "../../../assets/img/header/operating_time.png";
+import node_failure_logo from "../../../assets/img/header/node_failure.png";
+import description_failure_logo from "../../../assets/img/header/description_failure.png";
+import recovery_method_logo from "../../../assets/img/header/recovery_method.png";
+import spare_parts_logo from "../../../assets/img/header/spare_parts.png";
+import date_logo from "../../../assets/img/header/date.png";
+import equipment_downtime_logo from "../../../assets/img/header/equipment_downtime.png";
+import service_logo from "../../../assets/img/header/service.png";
+import model_logo from "../../../assets/img/header/model.png";
+
 
 const header = (namefirst, namelast) =>
 	React.createElement(
@@ -25,7 +38,7 @@ export const complaintsColumns = (opts = {}) => [
 		ignoreRowClick: true,
 	},
 	{
-		name: "VIN",
+		name: imgHeader(number_logo, "VIN"),
 		selector: (r) => r.vin,
 		sortable: true,
 		grow: 2,
@@ -33,29 +46,29 @@ export const complaintsColumns = (opts = {}) => [
 		center: "true",
 	},
 	{
-		name: header("Дата", "отказа"),
+		name: imgHeader(date_failure_logo, header("Дата", "отказа")),
 		selector: (r) => r.date_of_failure,
 		id: "date_of_failure",
 		sortable: true,
-		grow: 1,
+		grow: 2,
 		wrap: true,
 		center: "true",
 	},
 	{
-		name: header("Наработка", "м/час"),
+		name: imgHeader(operating_time_logo, header("Наработка", "м/час")),
 		selector: (r) => r.operating_time,
 		sortable: true,
 		center: "true",
 		id: "operating_time",
-		grow: 1.5,
+		grow: 2,
 		wrap: true,
 	},
 	{
-		name: header("Узел", "отказа"),
+		name: imgHeader(node_failure_logo, header("Узел", "отказа")),
 		selector: (r) => r.node_failure_id,
 		center: "true",
 		sortable: true,
-		grow: 1,
+		grow: 2,
 		wrap: true,
 		cell: (r) =>
 			React.createElement(
@@ -80,18 +93,18 @@ export const complaintsColumns = (opts = {}) => [
 			),
 	},
 	{
-		name: header("Описание", "отказа"),
+		name: imgHeader(description_failure_logo, header("Описание", "отказа")),
 		selector: (r) => r.description_failure,
 		sortable: true,
 		center: "true",
-		grow: 3,
+		grow: 2,
 		wrap: true,
 	},
 	{
-		name: header("Способ", "восстановления"),
+		name: imgHeader(recovery_method_logo, header("Способ", "восстановления")),
 		selector: (r) => r.recovery_method_id,
 		sortable: true,
-		grow: 1.5,
+		grow: 2,
 		wrap: true,
 		center: "true",
 		cell: (r) =>
@@ -117,43 +130,43 @@ export const complaintsColumns = (opts = {}) => [
 			),
 	},
 	{
-		name: header("Используемые", "запасные части"),
+		name: imgHeader(spare_parts_logo, header("Используемые", "запасные части")),
 		selector: (r) => r.used_spare_parts,
 		sortable: true,
 		center: "true",
-		grow: 1.5,
+		grow: 2,
 		wrap: true,
 	},
 	{
-		name: header("Дата", "восстановления"),
+		name: imgHeader(date_logo, header("Дата", "восстановления")),
 		selector: (r) => r.date_recovery,
 		sortable: true,
 		center: "true",
-		grow: 1.5,
+		grow: 2,
 		wrap: true,
 	},
 	{
-		name: header("Время", "простоя техники"),
+		name: imgHeader(equipment_downtime_logo, header("Время", "простоя техники")),
 		selector: (r) => r.equipment_downtime,
 		sortable: true,
 		center: "true",
-		grow: 1,
+		grow: 2,
 		wrap: true,
 	},
 	{
-		name: header("Сервисная", "компания"),
+		name: imgHeader(service_logo, header("Сервисная", "компания")),
 		selector: (r) => r.service_company,
 		sortable: true,
 		center: "true",
-		grow: 1,
+		grow: 2,
 		wrap: true,
 	},
 	{
-		name: header("Модель", "машины"),
+		name: imgHeader(model_logo, header("Модель", "машины")),
 		selector: (r) => r.vehicle_model,
 		sortable: true,
 		center: "true",
-		grow: 1,
+		grow: 2,
 		wrap: true,
 	},
 ];

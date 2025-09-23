@@ -496,7 +496,7 @@ const Complaints = ({ activeTab, filters = {} }) => {
               </div>
             }
             noDataComponent={null}
-            customStyles={customStyles("1800px")}
+            customStyles={customStyles("2200px")}
             pagination
             paginationPerPage={perPage}
             onChangePage={(p) => setPage(p)}

@@ -661,7 +661,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                 </div>
               }
               noDataComponent={null}
-              customStyles={customStyles("2500px")}
+              customStyles={customStyles("2600px")}
               pagination
               paginationPerPage={perPage}
               onChangePage={(p) => setPage(p)}
