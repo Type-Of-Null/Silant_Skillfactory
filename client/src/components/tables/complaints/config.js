@@ -46,6 +46,14 @@ export const complaintsColumns = (opts = {}) => [
 		center: "true",
 	},
 	{
+		name: imgHeader(model_logo, header("Модель", "техники")),
+		selector: (r) => r.vehicle_model,
+		sortable: true,
+		center: "true",
+		grow: 2,
+		wrap: true,
+	},
+	{
 		name: imgHeader(date_failure_logo, header("Дата", "отказа")),
 		selector: (r) => r.date_of_failure,
 		id: "date_of_failure",
@@ -156,14 +164,6 @@ export const complaintsColumns = (opts = {}) => [
 	{
 		name: imgHeader(service_logo, header("Сервисная", "компания")),
 		selector: (r) => r.service_company,
-		sortable: true,
-		center: "true",
-		grow: 2,
-		wrap: true,
-	},
-	{
-		name: imgHeader(model_logo, header("Модель", "машины")),
-		selector: (r) => r.vehicle_model,
 		sortable: true,
 		center: "true",
 		grow: 2,
