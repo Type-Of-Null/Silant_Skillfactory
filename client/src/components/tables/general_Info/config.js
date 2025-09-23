@@ -4,7 +4,7 @@ import engine_logo from "../../../assets/img/header//engine.png";
 import model_logo from "../../../assets/img/header/model.png";
 import number_logo from "../../../assets/img/header/number.png";
 import transmission_logo from "../../../assets/img/header/transmission.png";
-import conract_logo from "../../../assets/img/header/contract.png";
+import contract_logo from "../../../assets/img/header/contract.png";
 import date_logo from "../../../assets/img/header/date.png";
 import recipient_logo from "../../../assets/img/header/recipient.png";
 import location_logo from "../../../assets/img/header/location.png";
@@ -38,10 +38,15 @@ export const customStyles = {
 		style: {
 			fontWeight: 600,
 			fontSize: "14px",
-			minHeight: "180px",
-			whiteSpace: "normal",
+			minHeight: "150px",
 			border: "0.5px solid #163E6C",
 			backgroundColor: "#EBE6D6",
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'flex-start', 
+			alignItems: 'center',
+			paddingTop: '10px',
+			paddingBottom: '10px',
 		},
 	},
 	rows: {
@@ -50,7 +55,6 @@ export const customStyles = {
 			fontSize: "14px",
 			textAlign: "center",
 			border: "0.5px solid #163E6C",
-
 		},
 	},
 };
@@ -247,7 +251,7 @@ export const generalColumns = (opts = {}) => [
 		center: "true",
 	},
 	{
-		name: imgHeader(conract_logo, header("Договор", "поставки")),
+		name: imgHeader(contract_logo, header("Договор", "поставки")),
 		selector: (r) => r.delivery_agreement,
 		sortable: true,
 		grow: 2,
