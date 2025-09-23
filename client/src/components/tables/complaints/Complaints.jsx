@@ -3,11 +3,8 @@ import DataTable from "react-data-table-component";
 import { apiClient } from "../../../utils/fetchWithTimeout";
 import { useApi } from "../../../hooks/useApi";
 import { useAuth } from "../../../contexts/AuthContext";
-import {
-  complaintsColumns,
-  customStyles,
-  complaintsfilteredRows,
-} from "./config";
+import { complaintsColumns, complaintsfilteredRows } from "./config";
+import { customStyles } from "../customStylesForTables";
 import { saveModel } from "../../../utils/saveModel";
 import ModelDetailsModal from "../../modals/ModelDetailsModal";
 import NoData from "../../tables/NoDataForTables";
@@ -41,8 +38,8 @@ const Complaints = ({ activeTab, filters = {} }) => {
     failure_date: "",
     operating_hours: null,
     service_company_id: null,
-		used_spare_parts: null,
-		recovery_date: "",
+    used_spare_parts: null,
+    recovery_date: "",
   };
 
   // Состояние добавления новой записи
@@ -339,22 +336,22 @@ const Complaints = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                     </div>
-										<div className="flex flex-col">
-                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
-                          Описание отказа
-                        </label>
-                        <input
-                          className="border px-2 py-1 text-sm"
-                          placeholder="Описание отказа"
-                          value={newRow.description_failure}
-                          onChange={(e) =>
-                            setNewRow((r) => ({
-                              ...r,
-                              description_failure: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
+                    <div className="flex flex-col">
+                      <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                        Описание отказа
+                      </label>
+                      <input
+                        className="border px-2 py-1 text-sm"
+                        placeholder="Описание отказа"
+                        value={newRow.description_failure}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            description_failure: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
                     <div className="flex flex-col">
                       <label className="mb-1 self-start text-xs text-[#3d3d3d]">
                         Способ восстановления
@@ -379,23 +376,23 @@ const Complaints = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                     </div>
-										<div className="flex flex-col">
-                        <label className="mb-1 self-start text-xs text-[#3d3d3d]">
-                          Исп. запасные части
-                        </label>
-                        <input
-                          className="border px-2 py-1 text-sm"
-                          placeholder="Запасные части"
-                          value={newRow.used_spare_parts}
-                          onChange={(e) =>
-                            setNewRow((r) => ({
-                              ...r,
-                              used_spare_parts: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-											<div className="flex flex-col">
+                    <div className="flex flex-col">
+                      <label className="mb-1 self-start text-xs text-[#3d3d3d]">
+                        Исп. запасные части
+                      </label>
+                      <input
+                        className="border px-2 py-1 text-sm"
+                        placeholder="Запасные части"
+                        value={newRow.used_spare_parts}
+                        onChange={(e) =>
+                          setNewRow((r) => ({
+                            ...r,
+                            used_spare_parts: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="flex flex-col">
                       <label className="mb-1 self-start text-xs text-[#3d3d3d]">
                         Дата восстановления
                       </label>
@@ -437,7 +434,6 @@ const Complaints = ({ activeTab, filters = {} }) => {
                         ))}
                       </select>
                     </div>
-
 
                     <button
                       type="button"
@@ -500,7 +496,7 @@ const Complaints = ({ activeTab, filters = {} }) => {
               </div>
             }
             noDataComponent={null}
-            customStyles={customStyles}
+            customStyles={customStyles("1800px")}
             pagination
             paginationPerPage={perPage}
             onChangePage={(p) => setPage(p)}

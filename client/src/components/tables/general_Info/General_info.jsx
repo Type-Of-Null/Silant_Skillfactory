@@ -3,7 +3,8 @@ import DataTable from "react-data-table-component";
 import { apiClient } from "../../../utils/fetchWithTimeout";
 import { useApi } from "../../../hooks/useApi";
 import { useAuth } from "../../../contexts/AuthContext";
-import { generalColumns, customStyles, generalFilterRows } from "./config";
+import { generalColumns, generalFilterRows } from "./config";
+import { customStyles } from "../customStylesForTables";
 import { saveModel } from "../../../utils/saveModel";
 import ModelDetailsModal from "../../modals/ModelDetailsModal";
 import NoData from "../../tables/NoDataForTables";
@@ -660,7 +661,7 @@ const General_info = ({ activeTab, filters = {} }) => {
                 </div>
               }
               noDataComponent={null}
-              customStyles={customStyles}
+              customStyles={customStyles("2500px")}
               pagination
               paginationPerPage={perPage}
               onChangePage={(p) => setPage(p)}

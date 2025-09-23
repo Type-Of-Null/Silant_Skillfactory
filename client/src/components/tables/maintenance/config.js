@@ -19,38 +19,6 @@ const header = (namefirst, namelast) =>
 const styleClickableRows =
 	"w-full inline-flex justify-center text-[#163E6C] underline decoration-dotted hover:text-[#1c4f8a]";
 
-export const customStyles = {
-	table: {
-		style: {
-			minHeight: "500px",
-			border: "1px solid #163E6C",
-		},
-	},
-	headCells: {
-		style: {
-			fontWeight: 600,
-			fontSize: "14px",
-			minHeight: "150px",
-			border: "0.5px solid #163E6C",
-			backgroundColor: "#EBE6D6",
-			display: 'flex',
-			flexDirection: 'column',
-			justifyContent: 'flex-start', 
-			alignItems: 'center',
-			paddingTop: '10px',
-			paddingBottom: '10px',
-		},
-	},
-	rows: {
-		style: {
-			minHeight: "48px",
-			fontSize: "14px",
-			textAlign: "center",
-			border: "0.5px solid #163E6C",
-		},
-	},
-};
-
 export const maintColumns = (opts = {}) => [
 	{
 		name: "#",
