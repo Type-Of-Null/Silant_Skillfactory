@@ -17,12 +17,12 @@ const ModelDetailsModal = ({
 }) => {
   const footer = (
     <>
-      <div className="text-xs text-[#3d3d3d]">ID: {data?.id ?? "—"}</div>
-      <div className="flex items-center gap-2">
+      {/* <div className="text-xs text-[#3d3d3d]">ID: {data?.id ?? "—"}</div> */}
+      <div className="flex items-center flex-1 justify-end gap-2">
         {!editMode && (
           <button
             type="button"
-            className=" bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
+            className="bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
             onClick={onClose}
           >
             Закрыть
@@ -31,7 +31,7 @@ const ModelDetailsModal = ({
         {canEdit && !editMode && (
           <button
             type="button"
-            className=" bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white hover:bg-[#1c4f8a]"
+            className="bg-[#163E6C] px-3 py-1 text-sm font-semibold text-white hover:bg-[#1c4f8a]"
             onClick={onStartEdit}
           >
             Редактировать
@@ -41,14 +41,14 @@ const ModelDetailsModal = ({
           <>
             <button
               type="button"
-              className=" bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
+              className="bg-gray-100 px-3 py-1 text-sm hover:bg-gray-200"
               onClick={onCancelEdit}
             >
               Отмена
             </button>
             <button
               type="button"
-              className=" bg-green-600 px-3 py-1 text-sm font-semibold text-white hover:bg-green-700"
+              className="bg-green-600 px-3 py-1 text-sm font-semibold text-white hover:bg-green-700"
               onClick={onSave}
             >
               Сохранить
@@ -94,7 +94,7 @@ const ModelDetailsModal = ({
                   type="text"
                   value={data?.name ?? ""}
                   onChange={(e) => onChangeName(e.target.value)}
-                  className="w-full  border border-gray-300 px-2 py-1"
+                  className="w-full border border-gray-300 px-2 py-1"
                 />
               </div>
               <div>
@@ -105,7 +105,7 @@ const ModelDetailsModal = ({
                   rows={4}
                   value={data?.description ?? ""}
                   onChange={(e) => onChangeDescription(e.target.value)}
-                  className="w-full  border border-gray-300 px-2 py-1"
+                  className="w-full border border-gray-300 px-2 py-1"
                 />
               </div>
             </div>
